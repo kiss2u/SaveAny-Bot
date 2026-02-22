@@ -47,7 +47,7 @@ func (n *AdminNotifier) sendMessage(chatID int64, msg string) {
 	}
 
 	ctx := context.Background()
-	_, err := n.client.SendMessage(ctx, &tg.MessagesSendMessageRequest{
+	err := n.client.SendMessage(ctx, &tg.MessagesSendMessageRequest{
 		Peer:    &tg.InputPeerUser{UserID: chatID},
 		Message: msg,
 	})
