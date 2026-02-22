@@ -17,10 +17,10 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     go build -trimpath \
     -ldflags=" \
     -s -w \
-    -X 'github.com/krau/SaveAny-Bot/config.Version=${VERSION}' \
-    -X 'github.com/krau/SaveAny-Bot/config.GitCommit=${GitCommit}' \
-    -X 'github.com/krau/SaveAny-Bot/config.BuildTime=${BuildTime}' \
-    -X 'github.com/krau/SaveAny-Bot/config.Docker=true' \
+    -X 'github.com/kiss2u/SaveAny-Bot/config.Version=${VERSION}' \
+    -X 'github.com/kiss2u/SaveAny-Bot/config.GitCommit=${GitCommit}' \
+    -X 'github.com/kiss2u/SaveAny-Bot/config.BuildTime=${BuildTime}' \
+    -X 'github.com/kiss2u/SaveAny-Bot/config.Docker=true' \
     " \
     -o saveany-bot .
 
