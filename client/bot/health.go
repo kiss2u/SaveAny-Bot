@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/celestix/gotgproto/ext"
+	"github.com/celestix/gotgproto"
 	"github.com/charmbracelet/log"
 )
 

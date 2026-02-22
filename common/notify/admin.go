@@ -3,12 +3,12 @@ package notify
 import (
 	"sync"
 
-	"github.com/celestix/gotgproto/ext"
+	"github.com/celestix/gotgproto"
 	"github.com/charmbracelet/log"
 )
 
 type AdminNotifier struct {
-	client    *ext.Client
+	client    *gotgproto.Client
 	adminIDs  []int64
 	mu        sync.RWMutex
 	enabled   bool
@@ -16,7 +16,7 @@ type AdminNotifier struct {
 
 var notifier *AdminNotifier
 
-func NewAdminNotifier(client *ext.Client, adminIDs []int64) *AdminNotifier {
+func NewAdminNotifier(client *gotgproto.Client, adminIDs []int64) *AdminNotifier {
 	return &AdminNotifier{
 		client:   client,
 		adminIDs: adminIDs,
