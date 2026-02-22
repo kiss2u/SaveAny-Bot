@@ -22,7 +22,7 @@ const (
 )
 
 func handleMenuCmd(ctx *ext.Context, u *ext.Update) error {
-	return showMainMenu(ctx, u.EffectiveChat.GetID())
+	return showMainMenu(ctx, u.GetUserChat().GetID())
 }
 
 func showMainMenu(ctx *ext.Context, chatID int64, msgID ...int) error {

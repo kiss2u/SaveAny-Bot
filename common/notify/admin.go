@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/celestix/gotgproto/ext"
-	"github.com/charmbracelet/log"
 )
 
 type AdminNotifier struct {
