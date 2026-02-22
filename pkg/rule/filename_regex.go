@@ -3,7 +3,7 @@ package rule
 import (
 	"regexp"
 
-	"github.com/krau/SaveAny-Bot/pkg/tfile"
+	"github.com/kiss2u/SaveAny-Bot/pkg/tfile"
 )
 
 type RuleFileNameRegex struct {

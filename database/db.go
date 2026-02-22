@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/log"
-	"github.com/krau/SaveAny-Bot/config"
+	"github.com/kiss2u/SaveAny-Bot/config"
 	"gorm.io/gorm"
 	glogger "gorm.io/gorm/logger"
 )

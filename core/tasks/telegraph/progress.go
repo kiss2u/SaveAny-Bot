@@ -9,9 +9,9 @@ import (
 	"github.com/gotd/td/telegram/message/entity"
 	"github.com/gotd/td/telegram/message/styling"
 	"github.com/gotd/td/tg"
-	"github.com/krau/SaveAny-Bot/common/i18n"
-	"github.com/krau/SaveAny-Bot/common/i18n/i18nk"
-	"github.com/krau/SaveAny-Bot/common/utils/tgutil"
+	"github.com/kiss2u/SaveAny-Bot/common/i18n"
+	"github.com/kiss2u/SaveAny-Bot/common/i18n/i18nk"
+	"github.com/kiss2u/SaveAny-Bot/common/utils/tgutil"
 )
 
 type ProgressTracker interface {

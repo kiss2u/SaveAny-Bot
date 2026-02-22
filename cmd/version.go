@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/krau/SaveAny-Bot/config"
+	"github.com/kiss2u/SaveAny-Bot/config"
 	"github.com/unvgo/ghselfupdate"
 
 	"github.com/blang/semver"

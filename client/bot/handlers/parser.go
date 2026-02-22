@@ -7,10 +7,10 @@ import (
 	"github.com/celestix/gotgproto/dispatcher"
 	"github.com/celestix/gotgproto/ext"
 	"github.com/gotd/td/tg"
-	"github.com/krau/SaveAny-Bot/common/i18n"
-	"github.com/krau/SaveAny-Bot/common/i18n/i18nk"
-	"github.com/krau/SaveAny-Bot/config"
-	"github.com/krau/SaveAny-Bot/parsers"
+	"github.com/kiss2u/SaveAny-Bot/common/i18n"
+	"github.com/kiss2u/SaveAny-Bot/common/i18n/i18nk"
+	"github.com/kiss2u/SaveAny-Bot/config"
+	"github.com/kiss2u/SaveAny-Bot/parsers"
 )
 
 func handleParserCmd(ctx *ext.Context, u *ext.Update) error {

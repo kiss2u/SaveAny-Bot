@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/log"
-	"github.com/krau/SaveAny-Bot/config"
-	storenum "github.com/krau/SaveAny-Bot/pkg/enums/storage"
+	"github.com/kiss2u/SaveAny-Bot/config"
+	storenum "github.com/kiss2u/SaveAny-Bot/pkg/enums/storage"
 )
 
 var UserStorages = make(map[int64][]Storage)

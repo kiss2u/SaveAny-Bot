@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"github.com/gotd/td/telegram/message/styling"
-	"github.com/krau/SaveAny-Bot/common/i18n"
-	"github.com/krau/SaveAny-Bot/common/i18n/i18nk"
-	"github.com/krau/SaveAny-Bot/database"
+	"github.com/kiss2u/SaveAny-Bot/common/i18n"
+	"github.com/kiss2u/SaveAny-Bot/common/i18n/i18nk"
+	"github.com/kiss2u/SaveAny-Bot/database"
 )
 
 func BuildDirHelpStyling(dirs []database.Dir) []styling.StyledTextOption {
