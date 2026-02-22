@@ -22,7 +22,7 @@ const (
 )
 
 func handleMenuCmd(ctx *ext.Context, u *ext.Update) error {
-	return showMainMenu(ctx, u.EffectiveChat.ID)
+	return showMainMenu(ctx, u.EffectiveChat.GetID())
 }
 
 func showMainMenu(ctx *ext.Context, chatID int64, msgID ...int) error {
@@ -78,7 +78,7 @@ func showMainMenu(ctx *ext.Context, chatID int64, msgID ...int) error {
 	if len(msgID) > 0 {
 		_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
 			Message:    statusText,
-			MsgID:      msgID[0],
+			ID:         msgID[0],
 			ReplyMarkup: markup,
 		})
 		return err
@@ -161,7 +161,7 @@ _Updated: just now_`,
 
 	_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
 		Message:    statusText,
-		MsgID:      msgID,
+		ID:         msgID,
 		ReplyMarkup: markup,
 	})
 	return err
@@ -221,7 +221,7 @@ func showTasksCallback(ctx *ext.Context, chatID int64, msgID int) error {
 
 	_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
 		Message:    tasksText,
-		MsgID:      msgID,
+		ID:         msgID,
 		ReplyMarkup: markup,
 	})
 	return err
@@ -255,17 +255,13 @@ func showStoragesCallback(ctx *ext.Context, chatID int64, msgID int) error {
 
 	_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
 		Message:    storagesText,
-		MsgID:      msgID,
+		ID:         msgID,
 		ReplyMarkup: markup,
 	})
 	return err
 }
 
 func toggleSilentCallback(ctx *ext.Context, chatID int64, msgID int) error {
-	// Get user's silent mode status from database or config
-	userID := chatID
-	// For now, just show current status - actual toggle would need database access
-
 	silentText := "🔇 *Silent Mode*\n\n"
 	silentText += "Current: _Use /silent to toggle_\n\n"
 	silentText += "When enabled, bot won't send completion notifications for downloads."
@@ -286,7 +282,7 @@ func toggleSilentCallback(ctx *ext.Context, chatID int64, msgID int) error {
 
 	_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
 		Message:    silentText,
-		MsgID:      msgID,
+		ID:         msgID,
 		ReplyMarkup: markup,
 	})
 	return err

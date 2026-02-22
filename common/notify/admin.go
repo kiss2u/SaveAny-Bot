@@ -1,7 +1,6 @@
 package notify
 
 import (
-	"context"
 	"sync"
 
 	"github.com/celestix/gotgproto/ext"
@@ -45,14 +44,11 @@ func (n *AdminNotifier) sendMessage(chatID int64, msg string) {
 		return
 	}
 
-	_, err := n.ctx.SendMessage(chatID, &struct {
+	n.ctx.SendMessage(chatID, &struct {
 		Message string `json:"message"`
 	}{
 		Message: msg,
 	})
-	if err != nil {
-		log.Error("Failed to send admin notification", "chat_id", chatID, "error", err)
-	}
 }
 
 func (n *AdminNotifier) NotifyDisconnected() {
