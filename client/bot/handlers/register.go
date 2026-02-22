@@ -43,6 +43,7 @@ var CommandHandlers = []DescCommandHandler{
 	{"lswatch", i18nk.BotMsgCmdLswatch, handleLswatchCmd},
 	{"syncpeers", i18nk.BotMsgCmdSyncpeers, handleSyncpeersCmd},
 	{"update", i18nk.BotMsgCmdUpdate, handleUpdateCmd},
+	{"menu", i18nk.BotMsgCmdHelp, handleMenuCmd},
 }
 
 func Register(disp dispatcher.Dispatcher) {
@@ -61,6 +62,8 @@ func Register(disp dispatcher.Dispatcher) {
 	disp.AddHandler(handlers.NewCallbackQuery(filters.CallbackQuery.Prefix(tcbdata.TypeSetDefault), handleSetDefaultCallback))
 	disp.AddHandler(handlers.NewCallbackQuery(filters.CallbackQuery.Prefix(tcbdata.TypeCancel), handleCancelCallback))
 	disp.AddHandler(handlers.NewCallbackQuery(filters.CallbackQuery.Prefix(tcbdata.TypeConfig), handleConfigCallback))
+	// Register menu callback handlers
+	disp.AddHandler(handlers.NewCallbackQuery(filters.CallbackQuery.Prefix("menu:"), handleMenuCallback))
 	disp.AddHandler(handlers.NewMessage(sabotfilters.RegexUrl(regexp.MustCompile(re.TgMessageLinkRegexString)), handleSilentMode(handleMessageLink, handleSilentSaveLink)))
 	disp.AddHandler(handlers.NewMessage(sabotfilters.RegexUrl(regexp.MustCompile(re.TelegraphUrlRegexString)), handleSilentMode(handleTelegraphUrlMessage, handleSilentSaveTelegraph)))
 	disp.AddHandler(handlers.NewMessage(filters.Message.Media, handleSilentMode(handleMediaMessage, handleSilentSaveMedia)))
