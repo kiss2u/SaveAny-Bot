@@ -82,3 +82,9 @@ func syncUsers(ctx context.Context) error {
 
 	return nil
 }
+
+
+// GetDB returns the database instance for a given context
+func GetDB(ctx context.Context) *gorm.DB {
+	return db.WithContext(ctx)
+}

@@ -3,6 +3,8 @@ package web
 import (
 	"embed"
 	"io/fs"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 //go:embed static/*

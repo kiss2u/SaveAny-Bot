@@ -2,11 +2,7 @@ package database
 
 import (
 	"context"
-	"encoding/json"
 	"time"
-
-	"github.com/charmbracelet/log"
-	"gorm.io/gorm"
 )
 
 // TaskState represents the persisted state of a task

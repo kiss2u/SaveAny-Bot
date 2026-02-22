@@ -3,7 +3,6 @@ package web
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/gofiber/fiber/v2"
 )

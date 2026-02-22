@@ -8,7 +8,7 @@ import (
 )
 
 type AdminNotifier struct {
-	client    *gotgproto.Client
+	client    *ext.Client
 	adminIDs  []int64
 	mu        sync.RWMutex
 	enabled   bool
@@ -16,7 +16,7 @@ type AdminNotifier struct {
 
 var notifier *AdminNotifier
 
-func NewAdminNotifier(client *gotgproto.Client, adminIDs []int64) *AdminNotifier {
+func NewAdminNotifier(client *ext.Client, adminIDs []int64) *AdminNotifier {
 	return &AdminNotifier{
 		client:   client,
 		adminIDs: adminIDs,
