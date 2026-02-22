@@ -1,55 +1,49 @@
-# SaveAny-Bot 配置示例 (Web UI 已启用)
+# SaveAny-Bot Docker 配置文件示例
+# 复制此文件为 config.toml 并修改配置
 
-# 语言设置
-lang = "zh-Hans"
-
-# 同时下载文件数
-workers = 5
-
-# 重试次数
+workers = 4
 retry = 3
-
-# 线程数
 threads = 4
-
-# 流式传输模式
 stream = false
 
 [telegram]
 # Bot Token (从 @BotFather 获取)
-token = ""
+token = "YOUR_BOT_TOKEN_HERE"
+# 如果需要使用自己的 Telegram API
+# app_id = 1234567
+# app_hash = "your_app_hash_here"
 
-# Telegram API 配置 (可选，使用默认)
-# app_id = 1025907
-# app_hash = "452b0359b988148995f22ff0f4229750"
+# 代理配置 (可选)
+[telegram.proxy]
+enable = false
+url = "socks5://proxy:7890"
 
-[web]
-# 启用 Web 管理界面
-enable = true
-
-# 监听地址 (容器内使用 0.0.0.0)
-host = "0.0.0.0"
-
-# 监听端口
-port = 8080
-
-# Web 认证 (可选)
-# username = "admin"
-# password = "your_password"
-
+# Aria2 配置 (可选)
 [aria2]
 enable = false
+url = "http://aria2:6800/jsonrpc"
+secret = "your_rpc_secret"
+remove_after_transfer = true
 
 # 存储列表
 [[storages]]
 name = "local"
 type = "local"
 enable = true
-base_path = "/app/downloads"
+base_path = "./downloads"
 
-# 用户列表
+# 用户列表 (添加你的 Telegram User ID)
 [[users]]
-# 替换为你的 Telegram User ID
-id = 0
+id = 123456789
 storages = []
 blacklist = true
+
+# Web 配置
+[web]
+enable = true
+host = "0.0.0.0"
+port = 8080
+# Web UI 用户名 (可选)
+username = "admin"
+# Web UI 密码 (可选)
+password = "change_me"

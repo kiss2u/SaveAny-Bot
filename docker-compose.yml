@@ -1,13 +1,45 @@
+version: "3.8"
+
 services:
   saveany-bot:
-    image: ghcr.io/krau/saveany-bot:latest
+    image: ghcr.io/kiss2u/saveany-bot:latest
     container_name: saveany-bot
     restart: unless-stopped
+    ports:
+      - "8080:8080"  # Web UI 端口
     volumes:
+      - ./config.toml:/app/config.toml:ro
       - ./data:/app/data
-      - ./config.toml:/app/config.toml
       - ./downloads:/app/downloads
-      - ./cache:/app/cache
-    # 使用 host 模式以便访问宿主机服务 (如代理)
-    # 如果你对 Docker 网络模式熟悉, 可以自行修改
-    network_mode: host
+    environment:
+      - TZ=Asia/Shanghai
+      # 可选：通过环境变量覆盖配置
+      # - SAVEANY_TELEGRAM_TOKEN=your_bot_token
+      # - SAVEANY_WEB_ENABLE=true
+      # - SAVEANY_WEB_PORT=8080
+    depends_on:
+      - aria2
+    networks:
+      - saveany-network
+
+  # 可选：如果你启用了 Aria2 下载支持
+  # aria2:
+  #   image: p3terx/aria2-pro
+  #   container_name: aria2
+  #   restart: unless-stopped
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=Asia/Shanghai
+  #     - RPC_SECRET=your_aria2_secret
+  #     - ARIA2_USER=username
+  #     - ARIA2_PASS=password
+  #   volumes:
+  #     - ./aria2/config:/config
+  #     - ./aria2/downloads:/downloads
+  #   networks:
+  #     - saveany-network
+
+networks:
+  saveany-network:
+    driver: bridge
