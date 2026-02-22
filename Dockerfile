@@ -7,9 +7,9 @@ ARG BuildTime="Unknown"
 WORKDIR /app
 
 COPY go.mod go.sum ./
-RUN go mod tidy
 
 COPY . .
+RUN go mod tidy
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
     CGO_ENABLED=0 \
