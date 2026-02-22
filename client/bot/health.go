@@ -23,20 +23,20 @@ const (
 type ConnectionCallback func(oldStatus, newStatus ConnectionStatus)
 
 type HealthChecker struct {
-	client        *gotgproto.Client
-	mu            sync.RWMutex
-	status        ConnectionStatus
-	lastSuccess   time.Time
-	lastError     error
-	failCount     int
-	checkInterval time.Duration
-	maxRetries   int
-	ctx          context.Context
-	cancel       context.CancelFunc
+	client          *gotgproto.Client
+	mu              sync.RWMutex
+	status          ConnectionStatus
+	lastSuccess     time.Time
+	lastError       error
+	failCount       int
+	checkInterval   time.Duration
+	maxRetries     int
+	ctx             context.Context
+	cancel          context.CancelFunc
 	// Callbacks for status changes
-	onDisconnected func()
-	onReconnected  func()
-	onReconnectFailed func()
+	OnDisconnected  func()
+	OnReconnected   func()
+	OnReconnectFailed func()
 }
 
 var healthChecker *HealthChecker
@@ -87,8 +87,8 @@ func (h *HealthChecker) checkConnection() {
 
 		if h.failCount >= 3 && h.status != ConnectionStatusReconnecting {
 			h.status = ConnectionStatusReconnecting
-			if h.onDisconnected != nil {
-				go h.onDisconnected()
+			if h.OnDisconnected != nil {
+				go h.OnDisconnected()
 			}
 			go h.handleReconnect()
 		}
@@ -98,8 +98,8 @@ func (h *HealthChecker) checkConnection() {
 		if h.status == ConnectionStatusReconnecting {
 			h.status = ConnectionStatusConnected
 			log.Info("Connection restored")
-			if h.onReconnected != nil {
-				go h.onReconnected()
+			if h.OnReconnected != nil {
+				go h.OnReconnected()
 			}
 		} else if h.status == ConnectionStatusConnecting {
 			h.status = ConnectionStatusConnected
@@ -108,8 +108,8 @@ func (h *HealthChecker) checkConnection() {
 
 	// Notify if status changed to disconnected
 	if oldStatus != ConnectionStatusDisconnected && h.status == ConnectionStatusDisconnected {
-		if h.onReconnectFailed != nil {
-			go h.onReconnectFailed()
+		if h.OnReconnectFailed != nil {
+			go h.OnReconnectFailed()
 		}
 	}
 }

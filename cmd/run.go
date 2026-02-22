@@ -81,7 +81,7 @@ func initAll(ctx context.Context, cmd *cobra.Command) (<-chan struct{}, error) {
 		}
 	}
 	// Start web server if enabled
-	webServer := startWebServer(ctx)
+	startWebServer(ctx)
 
 	botChan, botClient := bot.Init(ctx)
 
@@ -95,13 +95,13 @@ func initAll(ctx context.Context, cmd *cobra.Command) (<-chan struct{}, error) {
 			adminNotifier := notify.NewAdminNotifier(botClient, adminIDs)
 			go adminNotifier.NotifyStartup()
 
-			healthChecker.onDisconnected = func() {
+			healthChecker.OnDisconnected = func() {
 				go adminNotifier.NotifyDisconnected()
 			}
-			healthChecker.onReconnected = func() {
+			healthChecker.OnReconnected = func() {
 				go adminNotifier.NotifyReconnected()
 			}
-			healthChecker.onReconnectFailed = func() {
+			healthChecker.OnReconnectFailed = func() {
 				go adminNotifier.NotifyReconnectFailed()
 			}
 		}
