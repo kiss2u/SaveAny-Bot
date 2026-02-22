@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/celestix/gotgproto/ext"
+	"github.com/gotd/td/tg"
 )
 
 type AdminNotifier struct {
@@ -43,9 +44,9 @@ func (n *AdminNotifier) sendMessage(chatID int64, msg string) {
 		return
 	}
 
-	// Use ext.ReplyTextString to send a simple text message
-	n.ctx.SendMessage(chatID, &ext.TextMessage{
-		Text: msg,
+	// Use tg.MessagesSendMessageRequest to send a simple text message
+	n.ctx.SendMessage(chatID, &tg.MessagesSendMessageRequest{
+		Message: msg,
 	})
 }
 
