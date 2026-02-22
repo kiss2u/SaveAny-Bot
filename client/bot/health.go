@@ -74,7 +74,7 @@ func (h *HealthChecker) Start(ctx context.Context) {
 }
 
 func (h *HealthChecker) checkConnection() {
-	err := h.client.API().PingAsync(h.ctx)
+	err := h.client.Ping(h.ctx)
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
@@ -130,7 +130,7 @@ func (h *HealthChecker) handleReconnect() {
 		logger.Infof("Reconnect attempt %d/%d in %v", attempt, h.maxRetries, sleepDuration)
 		time.Sleep(sleepDuration)
 
-		if err := h.client.API().PingAsync(h.ctx); err == nil {
+		if err := h.client.Ping(h.ctx); err == nil {
 			h.mu.Lock()
 			h.status = ConnectionStatusConnected
 			h.failCount = 0

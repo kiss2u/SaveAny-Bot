@@ -1,17 +1,19 @@
 package notify
 
 import (
+	"context"
 	"sync"
 
 	"github.com/celestix/gotgproto"
 	"github.com/charmbracelet/log"
+	"github.com/gotd/td/tg"
 )
 
 type AdminNotifier struct {
-	client    *gotgproto.Client
-	adminIDs  []int64
-	mu        sync.RWMutex
-	enabled   bool
+	client   *gotgproto.Client
+	adminIDs []int64
+	mu       sync.RWMutex
+	enabled  bool
 }
 
 var notifier *AdminNotifier
@@ -44,7 +46,11 @@ func (n *AdminNotifier) sendMessage(chatID int64, msg string) {
 		return
 	}
 
-	_, err := n.client.SendMessage(chatID, msg, nil)
+	ctx := context.Background()
+	_, err := n.client.SendMessage(ctx, &tg.MessagesSendMessageRequest{
+		Peer:    &tg.InputPeerUser{UserID: chatID},
+		Message: msg,
+	})
 	if err != nil {
 		log.Error("Failed to send admin notification", "chat_id", chatID, "error", err)
 	}
