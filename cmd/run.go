@@ -91,8 +91,8 @@ func initAll(ctx context.Context, cmd *cobra.Command) (<-chan struct{}, error) {
 
 		// Setup admin notifications
 		adminIDs := getAdminUserIDs()
-		if len(adminIDs) > 0 {
-			adminNotifier := notify.NewAdminNotifier(botClient, adminIDs)
+		if len(adminIDs) > 0 && bot.ExtContext() != nil {
+			adminNotifier := notify.NewAdminNotifier(bot.ExtContext(), adminIDs)
 			go adminNotifier.NotifyStartup()
 
 			healthChecker.OnDisconnected = func() {

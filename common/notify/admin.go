@@ -4,13 +4,12 @@ import (
 	"context"
 	"sync"
 
-	"github.com/celestix/gotgproto"
+	"github.com/celestix/gotgproto/ext"
 	"github.com/charmbracelet/log"
-	"github.com/gotd/td/tg"
 )
 
 type AdminNotifier struct {
-	client   *gotgproto.Client
+	ctx      *ext.Context
 	adminIDs []int64
 	mu       sync.RWMutex
 	enabled  bool
@@ -18,11 +17,11 @@ type AdminNotifier struct {
 
 var notifier *AdminNotifier
 
-func NewAdminNotifier(client *gotgproto.Client, adminIDs []int64) *AdminNotifier {
+func NewAdminNotifier(ctx *ext.Context, adminIDs []int64) *AdminNotifier {
 	return &AdminNotifier{
-		client:   client,
+		ctx:      ctx,
 		adminIDs: adminIDs,
-		enabled:  len(adminIDs) > 0 && client != nil,
+		enabled:  len(adminIDs) > 0 && ctx != nil,
 	}
 }
 
@@ -42,13 +41,13 @@ func (n *AdminNotifier) Notify(msg string) {
 }
 
 func (n *AdminNotifier) sendMessage(chatID int64, msg string) {
-	if n.client == nil {
+	if n.ctx == nil {
 		return
 	}
 
-	ctx := context.Background()
-	err := n.client.SendMessage(ctx, &tg.MessagesSendMessageRequest{
-		Peer:    &tg.InputPeerUser{UserID: chatID},
+	_, err := n.ctx.SendMessage(chatID, &struct {
+		Message string `json:"message"`
+	}{
 		Message: msg,
 	})
 	if err != nil {
