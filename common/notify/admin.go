@@ -43,10 +43,9 @@ func (n *AdminNotifier) sendMessage(chatID int64, msg string) {
 		return
 	}
 
-	n.ctx.SendMessage(chatID, &struct {
-		Message string `json:"message"`
-	}{
-		Message: msg,
+	// Use ext.ReplyTextString to send a simple text message
+	n.ctx.SendMessage(chatID, &ext.TextMessage{
+		Text: msg,
 	})
 }
 
