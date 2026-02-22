@@ -14,12 +14,14 @@ import (
 	userclient "github.com/krau/SaveAny-Bot/client/user"
 	"github.com/krau/SaveAny-Bot/common/cache"
 	"github.com/krau/SaveAny-Bot/common/i18n"
+	"github.com/krau/SaveAny-Bot/common/notify"
 	"github.com/krau/SaveAny-Bot/common/utils/fsutil"
 	"github.com/krau/SaveAny-Bot/config"
 	"github.com/krau/SaveAny-Bot/core"
 	"github.com/krau/SaveAny-Bot/database"
 	"github.com/krau/SaveAny-Bot/parsers"
 	"github.com/krau/SaveAny-Bot/storage"
+	"github.com/krau/SaveAny-Bot/web"
 	"github.com/spf13/cobra"
 )
 
@@ -60,6 +62,8 @@ func initAll(ctx context.Context, cmd *cobra.Command) (<-chan struct{}, error) {
 	i18n.Init(config.C().Lang)
 	logger.Info("Initializing...")
 	database.Init(ctx)
+	// Initialize task state persistence
+	database.InitTaskState(ctx)
 	storage.LoadStorages(ctx)
 	if config.C().Parser.PluginEnable {
 		for _, dir := range config.C().Parser.PluginDirs {
@@ -76,7 +80,62 @@ func initAll(ctx context.Context, cmd *cobra.Command) (<-chan struct{}, error) {
 			logger.Fatal("User login failed", "error", err)
 		}
 	}
-	return bot.Init(ctx), nil
+	// Start web server if enabled
+	webServer := startWebServer(ctx)
+
+	botChan, botClient := bot.Init(ctx)
+
+	// Start health checker with admin notifications
+	if botClient != nil {
+		healthChecker := bot.NewHealthChecker(botClient, 30*time.Second, 10)
+
+		// Setup admin notifications
+		adminIDs := getAdminUserIDs()
+		if len(adminIDs) > 0 {
+			adminNotifier := notify.NewAdminNotifier(botClient, adminIDs)
+			go adminNotifier.NotifyStartup()
+
+			healthChecker.onDisconnected = func() {
+				go adminNotifier.NotifyDisconnected()
+			}
+			healthChecker.onReconnected = func() {
+				go adminNotifier.NotifyReconnected()
+			}
+			healthChecker.onReconnectFailed = func() {
+				go adminNotifier.NotifyReconnectFailed()
+			}
+		}
+
+		go healthChecker.Start(ctx)
+		log.Info("Health checker started")
+	}
+
+	return botChan, nil
+}
+
+func getAdminUserIDs() []int64 {
+	var ids []int64
+	for _, user := range config.C().Users {
+		ids = append(ids, user.ID)
+	}
+	return ids
+}
+
+func startWebServer(ctx context.Context) *web.Server {
+	webConfig := config.C().Web
+	if !webConfig.Enable {
+		return nil
+	}
+
+	server := web.New(ctx, &webConfig)
+	go func() {
+		if err := server.Run(); err != nil {
+			log.FromContext(ctx).Error("Web server failed", "error", err)
+		}
+	}()
+
+	log.FromContext(ctx).Info("Web server started", "host", webConfig.Host, "port", webConfig.Port)
+	return server
 }
 
 func cleanCache() {

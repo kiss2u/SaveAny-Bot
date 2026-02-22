@@ -13,6 +13,8 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/gabriel-vasile/mimetype v1.4.12
 	github.com/goccy/go-yaml v1.19.2
+	github.com/gofiber/fiber/v2 v2.52.0
+	github.com/gofiber/utils/v2 v2.0.0-beta.4
 	github.com/gotd/contrib v0.21.1
 	github.com/gotd/td v0.137.0
 	github.com/johannesboyne/gofakes3 v0.0.0-20250916175020-ebf3e50324d3

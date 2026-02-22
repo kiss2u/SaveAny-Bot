@@ -1,0 +1,55 @@
+# SaveAny-Bot 配置示例 (Web UI 已启用)
+
+# 语言设置
+lang = "zh-Hans"
+
+# 同时下载文件数
+workers = 5
+
+# 重试次数
+retry = 3
+
+# 线程数
+threads = 4
+
+# 流式传输模式
+stream = false
+
+[telegram]
+# Bot Token (从 @BotFather 获取)
+token = ""
+
+# Telegram API 配置 (可选，使用默认)
+# app_id = 1025907
+# app_hash = "452b0359b988148995f22ff0f4229750"
+
+[web]
+# 启用 Web 管理界面
+enable = true
+
+# 监听地址 (容器内使用 0.0.0.0)
+host = "0.0.0.0"
+
+# 监听端口
+port = 8080
+
+# Web 认证 (可选)
+# username = "admin"
+# password = "your_password"
+
+[aria2]
+enable = false
+
+# 存储列表
+[[storages]]
+name = "local"
+type = "local"
+enable = true
+base_path = "/app/downloads"
+
+# 用户列表
+[[users]]
+# 替换为你的 Telegram User ID
+id = 0
+storages = []
+blacklist = true

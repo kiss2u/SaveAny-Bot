@@ -18,13 +18,20 @@ import (
 	"github.com/krau/SaveAny-Bot/database"
 )
 
-var ectx *ext.Context
+var (
+	ectx     *ext.Context
+	botClient *gotgproto.Client
+)
 
 func ExtContext() *ext.Context {
 	return ectx
 }
 
-func Init(ctx context.Context) <-chan struct{} {
+func BotClient() *gotgproto.Client {
+	return botClient
+}
+
+func Init(ctx context.Context) (<-chan struct{}, *gotgproto.Client) {
 	log.FromContext(ctx).Info("Initializing Bot...")
 	resultChan := make(chan struct {
 		client *gotgproto.Client
@@ -96,7 +103,8 @@ func Init(ctx context.Context) <-chan struct{} {
 		}
 		handlers.Register(result.client.Dispatcher)
 		ectx = result.client.CreateContext()
+		botClient = result.client
 		log.FromContext(ctx).Info("Bot initialization completed.")
 	}
-	return shouldRestart
+	return shouldRestart, botClient
 }

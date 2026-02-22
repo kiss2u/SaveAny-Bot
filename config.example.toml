@@ -63,3 +63,16 @@ blacklist = true
 id = 123456
 storages = ["本机1"]
 blacklist = false  # 使用白名单模式，此时，用户 123456 仅可使用标识名为 '本地1' 的存储
+
+# Web 配置
+[web]
+# 启用 Web 界面
+enable = false
+# 监听地址
+host = "0.0.0.0"
+# 监听端口
+port = 8080
+# 用户名 (可选)
+username = ""
+# 密码 (可选)
+password = ""

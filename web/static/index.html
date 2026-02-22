@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaveAny-Bot Dashboard</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --bg-light: #16213e;
+            --accent: #0f3460;
+            --primary: #e94560;
+            --text: #eee;
+            --text-muted: #888;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: var(--bg-light);
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        h1 { font-size: 24px; color: var(--primary); }
+        
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .status-connected { background: #2ecc71; color: #000; }
+        .status-disconnected { background: #e74c3c; color: #fff; }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--accent);
+        }
+        
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--accent);
+        }
+        
+        .stat:last-child { border-bottom: none; }
+        
+        .stat-value { font-weight: bold; color: var(--primary); }
+        
+        .btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+        
+        .btn:hover { opacity: 0.8; }
+        
+        .btn-secondary { background: var(--accent); }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: var(--bg-light);
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        
+        .tab.active { background: var(--primary); }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-muted);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg);
+            border: 1px solid var(--accent);
+            color: var(--text);
+            border-radius: 5px;
+        }
+        
+        .wizard {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .wizard-step {
+            display: none;
+        }
+        
+        .wizard-step.active { display: block; }
+        
+        .wizard-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .wizard-progress-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: var(--accent);
+            margin: 0 5px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .wizard-progress-item.active {
+            background: var(--primary);
+        }
+        
+        .wizard-progress-item.completed {
+            background: #2ecc71;
+        }
+        
+        .storage-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .storage-option {
+            padding: 20px;
+            background: var(--bg);
+            border: 2px solid var(--accent);
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .storage-option:hover {
+            border-color: var(--primary);
+        }
+        
+        .storage-option.selected {
+            border-color: var(--primary);
+            background: var(--accent);
+        }
+        
+        .storage-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .hidden { display: none !important; }
+        
+        .nav { display: flex; gap: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Setup Wizard -->
+        <div id="wizard-view" class="wizard hidden">
+            <h1>SaveAny-Bot Setup Wizard</h1>
+            <div class="wizard-progress">
+                <div class="wizard-progress-item active" data-step="1">1. Bot Token</div>
+                <div class="wizard-progress-item" data-step="2">2. Storage</div>
+                <div class="wizard-progress-item" data-step="3">3. User</div>
+                <div class="wizard-progress-item" data-step="4">4. Complete</div>
+            </div>
+            
+            <!-- Step 1: Bot Token -->
+            <div class="wizard-step active" data-step="1">
+                <div class="card">
+                    <h2>Step 1: Enter Bot Token</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">
+                        Open @BotFather on Telegram to create a new bot and get the token.
+                    </p>
+                    <div class="form-group">
+                        <label>Bot Token</label>
+                        <input type="text" id="wizard-token" placeholder="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz">
+                    </div>
+                    <button class="btn" onclick="wizardNext(1)">Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 2: Storage -->
+            <div class="wizard-step" data-step="2">
+                <div class="card">
+                    <h2>Step 2: Select Storage</h2>
+                    <div class="storage-grid">
+                        <div class="storage-option" onclick="selectStorage('local')">
+                            <div class="storage-icon">💾</div>
+                            <div>Local</div>
+                        </div>
+                        <div class="storage-option" onclick="selectStorage('s3')">
+                            <div class="storage-icon">☁️</div>
+                            <div>S3</div>
+                        </div>
+                        <div class="storage-option" onclick="selectStorage('alist')">
+                            <div class="storage-icon">📁</div>
+                            <div>Alist</div>
+                        </div>
+                        <div class="storage-option" onclick="selectStorage('webdav')">
+                            <div class="storage-icon">🌐</div>
+                            <div>WebDAV</div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="wizard-storage">
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-secondary" onclick="wizardPrev(2)">Back</button>
+                        <button class="btn" onclick="wizardNext(2)">Next</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 2b: Storage Config -->
+            <div class="wizard-step" data-step="2b">
+                <div class="card">
+                    <h2>Configure Storage</h2>
+                    <div id="storage-config-fields"></div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-secondary" onclick="wizardPrev(2)">Back</button>
+                        <button class="btn" onclick="wizardNext(2)">Next</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 3: User ID -->
+            <div class="wizard-step" data-step="3">
+                <div class="card">
+                    <h2>Step 3: Your Telegram ID</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">
+                        Send /id to @userinfobot to get your Telegram ID.
+                    </p>
+                    <div class="form-group">
+                        <label>Telegram User ID</label>
+                        <input type="number" id="wizard-userid" placeholder="123456789">
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-secondary" onclick="wizardPrev(3)">Back</button>
+                        <button class="btn" onclick="wizardNext(3)">Next</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 4: Complete -->
+            <div class="wizard-step" data-step="4">
+                <div class="card">
+                    <h2>Setup Complete!</h2>
+                    <p style="margin-bottom: 20px;">
+                        Your configuration has been saved. The bot will start automatically.
+                    </p>
+                    <div id="config-preview" style="background: var(--bg); padding: 15px; border-radius: 5px; margin-bottom: 20px; font-family: monospace; font-size: 12px; white-space: pre-wrap;"></div>
+                    <button class="btn" onclick="showDashboard()">Go to Dashboard</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard -->
+        <div id="dashboard-view">
+            <header>
+                <h1>📂 SaveAny-Bot</h1>
+                <div class="nav">
+                    <span class="status-badge status-connected" id="connection-status">Connected</span>
+                    <button class="btn btn-secondary" onclick="showWizard()">Setup</button>
+                </div>
+            </header>
+            
+            <div class="grid">
+                <div class="card">
+                    <h2>Status</h2>
+                    <div class="stat">
+                        <span>Bot Status</span>
+                        <span class="stat-value" id="bot-status">Running</span>
+                    </div>
+                    <div class="stat">
+                        <span>Version</span>
+                        <span class="stat-value" id="version">-</span>
+                    </div>
+                    <div class="stat">
+                        <span>Uptime</span>
+                        <span class="stat-value" id="uptime">-</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Tasks</h2>
+                    <div class="stat">
+                        <span>Running</span>
+                        <span class="stat-value" id="running-tasks">0</span>
+                    </div>
+                    <div class="stat">
+                        <span>Queued</span>
+                        <span class="stat-value" id="queued-tasks">0</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Storage</h2>
+                    <div class="stat">
+                        <span>Active Storages</span>
+                        <span class="stat-value" id="storage-count">0</span>
+                    </div>
+                    <div id="storage-list"></div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="tabs">
+                    <button class="tab active" onclick="showTab('config')">Config</button>
+                    <button class="tab" onclick="showTab('tasks')">Tasks</button>
+                    <button class="tab" onclick="showTab('logs')">Logs</button>
+                </div>
+                
+                <div id="tab-config" class="tab-content">
+                    <h3>Configuration</h3>
+                    <div class="form-group">
+                        <label>Language</label>
+                        <select id="config-lang">
+                            <option value="en">English</option>
+                            <option value="zh">中文</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Workers</label>
+                        <input type="number" id="config-workers" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label>Proxy</label>
+                        <input type="text" id="config-proxy" placeholder="socks5://127.0.0.1:7890">
+                    </div>
+                    <button class="btn" onclick="saveConfig()">Save Config</button>
+                </div>
+                
+                <div id="tab-tasks" class="tab-content hidden">
+                    <h3>Running Tasks</h3>
+                    <div id="task-list"></div>
+                </div>
+                
+                <div id="tab-logs" class="tab-content hidden">
+                    <h3>Recent Logs</h3>
+                    <pre id="log-output" style="background: var(--bg); padding: 15px; border-radius: 5px; max-height: 400px; overflow-y: auto; font-size: 12px;"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let wizardSession = null;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchStatus();
+            setInterval(fetchStatus, 5000);
+        });
+        
+        async function fetchStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                
+                document.getElementById('bot-status').textContent = data.bot_connected ? 'Running' : 'Disconnected';
+                document.getElementById('connection-status').textContent = data.bot_connected ? 'Connected' : 'Disconnected';
+                document.getElementById('connection-status').className = 'status-badge ' + (data.bot_connected ? 'status-connected' : 'status-disconnected');
+                document.getElementById('version').textContent = data.version;
+                document.getElementById('uptime').textContent = data.uptime;
+                document.getElementById('running-tasks').textContent = data.running_tasks;
+                document.getElementById('queued-tasks').textContent = data.queued_tasks;
+                document.getElementById('storage-count').textContent = data.storage_count;
+            } catch (e) {
+                console.error('Failed to fetch status:', e);
+            }
+        }
+        
+        function showWizard() {
+            document.getElementById('dashboard-view').classList.add('hidden');
+            document.getElementById('wizard-view').classList.remove('hidden');
+            startWizard();
+        }
+        
+        function showDashboard() {
+            document.getElementById('wizard-view').classList.add('hidden');
+            document.getElementById('dashboard-view').classList.remove('hidden');
+            fetchStatus();
+        }
+        
+        async function startWizard() {
+            const res = await fetch('/api/wizard/start', { method: 'POST' });
+            const data = await res.json();
+            wizardSession = data.session_id;
+        }
+        
+        async function wizardNext(currentStep) {
+            let nextStep = currentStep + 1;
+            let data = {};
+            
+            if (currentStep === 1) {
+                data.token = document.getElementById('wizard-token').value;
+                if (!data.token) return alert('Please enter bot token');
+            } else if (currentStep === 2) {
+                data.storage = document.getElementById('wizard-storage').value;
+                if (!data.storage) return alert('Please select storage');
+            } else if (currentStep === 3) {
+                data.user_id = parseInt(document.getElementById('wizard-userid').value);
+                if (!data.user_id) return alert('Please enter user ID');
+            }
+            
+            const res = await fetch('/api/wizard/step', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session_id: wizardSession, data: data })
+            });
+            
+            if (res.ok) {
+                const result = await res.json();
+                updateWizardStep(result.step);
+                
+                if (result.step === 4) {
+                    document.getElementById('config-preview').textContent = 
+                        'lang = "en"\n' +
+                        'workers = 5\n' +
+                        '[[users]]\n' +
+                        'id = ' + data.user_id + '\n' +
+                        '[[storages]]\n' +
+                        'name = "default"\n' +
+                        'type = "' + data.storage + '"';
+                }
+            }
+        }
+        
+        function wizardPrev(currentStep) {
+            updateWizardStep(currentStep - 1);
+        }
+        
+        function updateWizardStep(step) {
+            document.querySelectorAll('.wizard-step').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`.wizard-step[data-step="${step}"]`).classList.add('active');
+            
+            document.querySelectorAll('.wizard-progress-item').forEach((el, i) => {
+                el.classList.remove('active', 'completed');
+                if (i + 1 < step) el.classList.add('completed');
+                if (i + 1 === step) el.classList.add('active');
+            });
+        }
+        
+        function selectStorage(type) {
+            document.getElementById('wizard-storage').value = type;
+            document.querySelectorAll('.storage-option').forEach(el => el.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+        
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+        }
+        
+        async function saveConfig() {
+            const config = {
+                lang: document.getElementById('config-lang').value,
+                workers: parseInt(document.getElementById('config-workers').value),
+                proxy: document.getElementById('config-proxy').value
+            };
+            
+            const res = await fetch('/api/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(config)
+            });
+            
+            if (res.ok) {
+                alert('Config saved!');
+            }
+        }
+    </script>
+</body>
+</html>

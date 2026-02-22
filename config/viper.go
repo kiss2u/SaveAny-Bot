@@ -33,6 +33,7 @@ type Config struct {
 	Storages []storage.StorageConfig `toml:"-" mapstructure:"-" json:"storages"`
 	Parser   parserConfig            `toml:"parser" mapstructure:"parser" json:"parser"`
 	Hook     hookConfig              `toml:"hook" mapstructure:"hook" json:"hook"`
+	Web      WebConfig               `toml:"web" mapstructure:"web" json:"web"`
 }
 
 type aria2Config struct {
