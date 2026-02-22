@@ -6,7 +6,7 @@ import (
 	"io"
 
 	"github.com/charmbracelet/log"
-	"github.com/kiss2u/SaveAny-Bot/common/tdler"
+	"github.com/krau/SaveAny-Bot/common/tdler"
 	"golang.org/x/sync/errgroup"
 )
 

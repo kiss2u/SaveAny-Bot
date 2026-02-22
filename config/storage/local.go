@@ -3,7 +3,7 @@ package storage
 import (
 	"fmt"
 
-	storenum "github.com/kiss2u/SaveAny-Bot/pkg/enums/storage"
+	storenum "github.com/krau/SaveAny-Bot/pkg/enums/storage"
 )
 
 type LocalStorageConfig struct {

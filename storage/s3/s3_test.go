@@ -9,9 +9,9 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/johannesboyne/gofakes3"
 	"github.com/johannesboyne/gofakes3/backend/s3mem"
-	storconfig "github.com/kiss2u/SaveAny-Bot/config/storage"
-	"github.com/kiss2u/SaveAny-Bot/pkg/enums/ctxkey"
-	"github.com/kiss2u/SaveAny-Bot/storage/s3"
+	storconfig "github.com/krau/SaveAny-Bot/config/storage"
+	"github.com/krau/SaveAny-Bot/pkg/enums/ctxkey"
+	"github.com/krau/SaveAny-Bot/storage/s3"
 )
 
 func newTestContext(t *testing.T) context.Context {

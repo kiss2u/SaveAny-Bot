@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	storconfig "github.com/kiss2u/SaveAny-Bot/config/storage"
-	"github.com/kiss2u/SaveAny-Bot/pkg/aria2"
-	storenum "github.com/kiss2u/SaveAny-Bot/pkg/enums/storage"
-	"github.com/kiss2u/SaveAny-Bot/pkg/enums/tasktype"
+	storconfig "github.com/krau/SaveAny-Bot/config/storage"
+	"github.com/krau/SaveAny-Bot/pkg/aria2"
+	storenum "github.com/krau/SaveAny-Bot/pkg/enums/storage"
+	"github.com/krau/SaveAny-Bot/pkg/enums/tasktype"
 )
 
 type mockStorage struct {

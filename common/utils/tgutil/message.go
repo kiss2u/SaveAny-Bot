@@ -16,10 +16,10 @@ import (
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/gotd/td/constant"
 	"github.com/gotd/td/tg"
-	"github.com/kiss2u/SaveAny-Bot/common/cache"
-	"github.com/kiss2u/SaveAny-Bot/common/i18n"
-	"github.com/kiss2u/SaveAny-Bot/common/i18n/i18nk"
-	"github.com/kiss2u/SaveAny-Bot/common/utils/strutil"
+	"github.com/krau/SaveAny-Bot/common/cache"
+	"github.com/krau/SaveAny-Bot/common/i18n"
+	"github.com/krau/SaveAny-Bot/common/i18n/i18nk"
+	"github.com/krau/SaveAny-Bot/common/utils/strutil"
 	"github.com/rs/xid"
 )
 

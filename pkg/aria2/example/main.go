@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/kiss2u/SaveAny-Bot/pkg/aria2"
+	"github.com/krau/SaveAny-Bot/pkg/aria2"
 )
 
 func main() {

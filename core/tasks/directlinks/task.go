@@ -7,10 +7,10 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/kiss2u/SaveAny-Bot/config"
-	"github.com/kiss2u/SaveAny-Bot/core"
-	"github.com/kiss2u/SaveAny-Bot/pkg/enums/tasktype"
-	"github.com/kiss2u/SaveAny-Bot/storage"
+	"github.com/krau/SaveAny-Bot/config"
+	"github.com/krau/SaveAny-Bot/core"
+	"github.com/krau/SaveAny-Bot/pkg/enums/tasktype"
+	"github.com/krau/SaveAny-Bot/storage"
 )
 
 type File struct {

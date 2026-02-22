@@ -10,9 +10,9 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/duke-git/lancet/v2/fileutil"
-	config "github.com/kiss2u/SaveAny-Bot/config/storage"
-	storenum "github.com/kiss2u/SaveAny-Bot/pkg/enums/storage"
-	"github.com/kiss2u/SaveAny-Bot/pkg/storagetypes"
+	config "github.com/krau/SaveAny-Bot/config/storage"
+	storenum "github.com/krau/SaveAny-Bot/pkg/enums/storage"
+	"github.com/krau/SaveAny-Bot/pkg/storagetypes"
 )
 
 type Local struct {

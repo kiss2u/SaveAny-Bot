@@ -9,8 +9,8 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/duke-git/lancet/v2/retry"
-	"github.com/kiss2u/SaveAny-Bot/common/utils/fsutil"
-	"github.com/kiss2u/SaveAny-Bot/config"
+	"github.com/krau/SaveAny-Bot/common/utils/fsutil"
+	"github.com/krau/SaveAny-Bot/config"
 	"golang.org/x/sync/errgroup"
 )
 

@@ -2,7 +2,7 @@ package web
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/kiss2u/SaveAny-Bot/storage"
+	"github.com/krau/SaveAny-Bot/storage"
 )
 
 func (s *Server) handleGetStorages(c *fiber.Ctx) error {

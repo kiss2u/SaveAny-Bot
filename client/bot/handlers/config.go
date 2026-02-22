@@ -8,12 +8,12 @@ import (
 	"github.com/celestix/gotgproto/dispatcher"
 	"github.com/celestix/gotgproto/ext"
 	"github.com/gotd/td/tg"
-	"github.com/kiss2u/SaveAny-Bot/common/i18n"
-	"github.com/kiss2u/SaveAny-Bot/common/i18n/i18nk"
-	"github.com/kiss2u/SaveAny-Bot/config"
-	"github.com/kiss2u/SaveAny-Bot/database"
-	"github.com/kiss2u/SaveAny-Bot/pkg/enums/fnamest"
-	"github.com/kiss2u/SaveAny-Bot/pkg/tcbdata"
+	"github.com/krau/SaveAny-Bot/common/i18n"
+	"github.com/krau/SaveAny-Bot/common/i18n/i18nk"
+	"github.com/krau/SaveAny-Bot/config"
+	"github.com/krau/SaveAny-Bot/database"
+	"github.com/krau/SaveAny-Bot/pkg/enums/fnamest"
+	"github.com/krau/SaveAny-Bot/pkg/tcbdata"
 )
 
 func handleConfigCmd(ctx *ext.Context, update *ext.Update) error {

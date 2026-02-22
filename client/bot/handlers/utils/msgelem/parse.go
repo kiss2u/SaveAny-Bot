@@ -7,9 +7,9 @@ import (
 	"github.com/gotd/td/telegram/message/entity"
 	"github.com/gotd/td/telegram/message/styling"
 	"github.com/gotd/td/tg"
-	"github.com/kiss2u/SaveAny-Bot/common/i18n"
-	"github.com/kiss2u/SaveAny-Bot/common/i18n/i18nk"
-	"github.com/kiss2u/SaveAny-Bot/pkg/parser"
+	"github.com/krau/SaveAny-Bot/common/i18n"
+	"github.com/krau/SaveAny-Bot/common/i18n/i18nk"
+	"github.com/krau/SaveAny-Bot/pkg/parser"
 )
 
 func BuildParsedTextEntity(item parser.Item) (string, []tg.MessageEntityClass, error) {

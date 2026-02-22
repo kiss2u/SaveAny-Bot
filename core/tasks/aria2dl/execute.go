@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/charmbracelet/log"
-	"github.com/kiss2u/SaveAny-Bot/config"
-	"github.com/kiss2u/SaveAny-Bot/pkg/aria2"
-	"github.com/kiss2u/SaveAny-Bot/pkg/enums/ctxkey"
+	"github.com/krau/SaveAny-Bot/config"
+	"github.com/krau/SaveAny-Bot/pkg/aria2"
+	"github.com/krau/SaveAny-Bot/pkg/enums/ctxkey"
 )
 
 // Execute implements core.Executable.

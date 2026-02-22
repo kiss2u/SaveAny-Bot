@@ -6,7 +6,7 @@ import (
 
 	"github.com/celestix/gotgproto/dispatcher/handlers/filters"
 	"github.com/celestix/gotgproto/types"
-	"github.com/kiss2u/SaveAny-Bot/common/utils/tgutil"
+	"github.com/krau/SaveAny-Bot/common/utils/tgutil"
 )
 
 func RegexUrl(r *regexp.Regexp) filters.MessageFilter {

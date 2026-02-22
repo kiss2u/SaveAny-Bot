@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/log"
-	"github.com/kiss2u/SaveAny-Bot/database/sqlite"
+	"github.com/krau/SaveAny-Bot/database/sqlite"
 	"gorm.io/gorm"
 )
 

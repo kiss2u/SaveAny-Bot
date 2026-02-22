@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/kiss2u/SaveAny-Bot/core"
-	"github.com/kiss2u/SaveAny-Bot/pkg/enums/tasktype"
-	"github.com/kiss2u/SaveAny-Bot/storage"
+	"github.com/krau/SaveAny-Bot/core"
+	"github.com/krau/SaveAny-Bot/pkg/enums/tasktype"
+	"github.com/krau/SaveAny-Bot/storage"
 )
 
 var _ core.Executable = (*Task)(nil)
