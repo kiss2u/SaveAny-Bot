@@ -6,8 +6,7 @@ import (
 	"strings"
 
 	"github.com/celestix/gotgproto/ext"
-	"github.com/celestix/gotgproto/ext/utils"
-	"github.com/celestix/gotgproto/tg"
+	"github.com/gotd/td/tg"
 	"github.com/krau/SaveAny-Bot/config"
 	"github.com/krau/SaveAny-Bot/core"
 	"github.com/krau/SaveAny-Bot/storage"
@@ -38,22 +37,41 @@ func showMainMenu(ctx *ext.Context, chatID int64, msgID ...int) error {
 	)
 
 	// Build inline keyboard
-	rows := [][]utils.InlineKeyboardButton{
-		{
-			{Text: "📊 Status", CallbackData: MenuCallbackStatus},
-			{Text: "📋 Tasks", CallbackData: MenuCallbackTasks},
+	markup := &tg.ReplyInlineMarkup{
+		Rows: []tg.KeyboardButtonRow{
+			{
+				Buttons: []tg.KeyboardButtonClass{
+					&tg.KeyboardButtonCallback{
+						Text: "📊 Status",
+						Data: []byte(MenuCallbackStatus),
+					},
+					&tg.KeyboardButtonCallback{
+						Text: "📋 Tasks",
+						Data: []byte(MenuCallbackTasks),
+					},
+				},
+			},
+			{
+				Buttons: []tg.KeyboardButtonClass{
+					&tg.KeyboardButtonCallback{
+						Text: "💾 Storages",
+						Data: []byte(MenuCallbackStorages),
+					},
+					&tg.KeyboardButtonCallback{
+						Text: "🔇 Silent Mode",
+						Data: []byte(MenuCallbackSilent),
+					},
+				},
+			},
+			{
+				Buttons: []tg.KeyboardButtonClass{
+					&tg.KeyboardButtonCallback{
+						Text: "🔄 Refresh",
+						Data: []byte(MenuCallbackRefresh),
+					},
+				},
+			},
 		},
-		{
-			{Text: "💾 Storages", CallbackData: MenuCallbackStorages},
-			{Text: "🔇 Silent Mode", CallbackData: MenuCallbackSilent},
-		},
-		{
-			{Text: "🔄 Refresh", CallbackData: MenuCallbackRefresh},
-		},
-	}
-
-	keyboard := utils.InlineKeyboardMarkup{
-		InlineKeyboard: rows,
 	}
 
 	// Send menu message
@@ -61,14 +79,14 @@ func showMainMenu(ctx *ext.Context, chatID int64, msgID ...int) error {
 		_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
 			Message:    statusText,
 			MsgID:      msgID[0],
-			ReplyMarkup: &keyboard,
+			ReplyMarkup: markup,
 		})
 		return err
 	}
 
 	_, err := ctx.SendMessage(chatID, &tg.MessagesSendMessageRequest{
 		Message:    statusText,
-		ReplyMarkup: &keyboard,
+		ReplyMarkup: markup,
 	})
 	return err
 }
@@ -79,7 +97,7 @@ func handleMenuCallback(ctx *ext.Context, u *ext.Update) error {
 	msgID := u.CallbackQuery.GetMsgID()
 
 	// Answer callback first
-	ctx.AnswerCallbackQuery(&tg.MessagesSetBotCallbackAnswerRequest{
+	ctx.AnswerCallback(&tg.MessagesSetBotCallbackAnswerRequest{
 		QueryID: u.CallbackQuery.QueryID,
 	})
 
@@ -128,20 +146,23 @@ _Updated: just now_`,
 	)
 
 	// Add back button
-	rows := [][]utils.InlineKeyboardButton{
-		{
-			{Text: "🔙 Back to Menu", CallbackData: MenuCallbackRefresh},
+	markup := &tg.ReplyInlineMarkup{
+		Rows: []tg.KeyboardButtonRow{
+			{
+				Buttons: []tg.KeyboardButtonClass{
+					&tg.KeyboardButtonCallback{
+						Text: "🔙 Back to Menu",
+						Data: []byte(MenuCallbackRefresh),
+					},
+				},
+			},
 		},
-	}
-
-	keyboard := utils.InlineKeyboardMarkup{
-		InlineKeyboard: rows,
 	}
 
 	_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
 		Message:    statusText,
 		MsgID:      msgID,
-		ReplyMarkup: &keyboard,
+		ReplyMarkup: markup,
 	})
 	return err
 }
@@ -181,21 +202,27 @@ func showTasksCallback(ctx *ext.Context, chatID int64, msgID int) error {
 	}
 
 	// Add action buttons
-	rows := [][]utils.InlineKeyboardButton{
-		{
-			{Text: "🔄 Refresh", CallbackData: MenuCallbackTasks},
-			{Text: "🔙 Back", CallbackData: MenuCallbackRefresh},
+	markup := &tg.ReplyInlineMarkup{
+		Rows: []tg.KeyboardButtonRow{
+			{
+				Buttons: []tg.KeyboardButtonClass{
+					&tg.KeyboardButtonCallback{
+						Text: "🔄 Refresh",
+						Data: []byte(MenuCallbackTasks),
+					},
+					&tg.KeyboardButtonCallback{
+						Text: "🔙 Back",
+						Data: []byte(MenuCallbackRefresh),
+					},
+				},
+			},
 		},
-	}
-
-	keyboard := utils.InlineKeyboardMarkup{
-		InlineKeyboard: rows,
 	}
 
 	_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
 		Message:    tasksText,
 		MsgID:      msgID,
-		ReplyMarkup: &keyboard,
+		ReplyMarkup: markup,
 	})
 	return err
 }
@@ -213,20 +240,23 @@ func showStoragesCallback(ctx *ext.Context, chatID int64, msgID int) error {
 	}
 
 	// Add back button
-	rows := [][]utils.InlineKeyboardButton{
-		{
-			{Text: "🔙 Back to Menu", CallbackData: MenuCallbackRefresh},
+	markup := &tg.ReplyInlineMarkup{
+		Rows: []tg.KeyboardButtonRow{
+			{
+				Buttons: []tg.KeyboardButtonClass{
+					&tg.KeyboardButtonCallback{
+						Text: "🔙 Back to Menu",
+						Data: []byte(MenuCallbackRefresh),
+					},
+				},
+			},
 		},
-	}
-
-	keyboard := utils.InlineKeyboardMarkup{
-		InlineKeyboard: rows,
 	}
 
 	_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
 		Message:    storagesText,
 		MsgID:      msgID,
-		ReplyMarkup: &keyboard,
+		ReplyMarkup: markup,
 	})
 	return err
 }
@@ -241,20 +271,23 @@ func toggleSilentCallback(ctx *ext.Context, chatID int64, msgID int) error {
 	silentText += "When enabled, bot won't send completion notifications for downloads."
 
 	// Add back button
-	rows := [][]utils.InlineKeyboardButton{
-		{
-			{Text: "🔙 Back to Menu", CallbackData: MenuCallbackRefresh},
+	markup := &tg.ReplyInlineMarkup{
+		Rows: []tg.KeyboardButtonRow{
+			{
+				Buttons: []tg.KeyboardButtonClass{
+					&tg.KeyboardButtonCallback{
+						Text: "🔙 Back to Menu",
+						Data: []byte(MenuCallbackRefresh),
+					},
+				},
+			},
 		},
-	}
-
-	keyboard := utils.InlineKeyboardMarkup{
-		InlineKeyboard: rows,
 	}
 
 	_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
 		Message:    silentText,
 		MsgID:      msgID,
-		ReplyMarkup: &keyboard,
+		ReplyMarkup: markup,
 	})
 	return err
 }
