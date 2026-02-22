@@ -1,5 +1,7 @@
 FROM golang:alpine AS builder
 
+RUN apk add --no-cache git
+
 ARG VERSION="dev"
 ARG GitCommit="Unknown"
 ARG BuildTime="Unknown"
