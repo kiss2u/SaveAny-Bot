@@ -12,7 +12,11 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 COPY . .
 RUN --mount=type=cache,target=/go/pkg/mod \
-    go mod tidy
+    go get github.com/gofiber/fiber/v2@v2.52.0 \
+    go get github.com/gofiber/fiber/v2/middleware/basicauth@v2.52.0 \
+    go get github.com/gofiber/fiber/v2/middleware/cors@v2.52.0 \
+    go get github.com/gofiber/fiber/v2/middleware/logger@v2.52.0 \
+    go get github.com/gofiber/fiber/v2/middleware/recover@v2.52.0
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
     CGO_ENABLED=0 \
