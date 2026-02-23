@@ -7,10 +7,8 @@ import (
 )
 
 func CreateUser(ctx context.Context, chatID int64) error {
-	if _, err := GetUserByChatID(ctx, chatID); err == nil {
-		return nil
-	}
-	return db.Create(&User{ChatID: chatID}).Error
+	// Use FirstOrCreate to avoid race condition and reduce to single query
+	return db.WithContext(ctx).FirstOrCreate(&User{}, User{ChatID: chatID}).Error
 }
 
 func GetAllUsers(ctx context.Context) ([]User, error) {

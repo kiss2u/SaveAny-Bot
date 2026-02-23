@@ -21,6 +21,9 @@ const (
 	MenuCallbackRefresh  = "menu:refresh"
 )
 
+// Storage selection callback prefix
+const MenuCallbackStorageSelect = "menu:storage:"
+
 func handleMenuCmd(ctx *ext.Context, u *ext.Update) error {
 	return showMainMenu(ctx, u.GetUserChat().GetID())
 }
@@ -38,42 +41,70 @@ func showMainMenu(ctx *ext.Context, chatID int64, msgID ...int) error {
 	statusText += "━━━━━━━━━━━━━━\n\n"
 	statusText += "选择一个操作:"
 
-	// Build inline keyboard - simple and clean
-	markup := &tg.ReplyInlineMarkup{
-		Rows: []tg.KeyboardButtonRow{
-			{
-				Buttons: []tg.KeyboardButtonClass{
-					&tg.KeyboardButtonCallback{
-						Text: "📊 状态",
-						Data: []byte(MenuCallbackStatus),
-					},
-					&tg.KeyboardButtonCallback{
-						Text: "📋 任务",
-						Data: []byte(MenuCallbackTasks),
-					},
-				},
+	// Build inline keyboard - with quick storage selection
+	var rows []tg.KeyboardButtonRow
+
+	// Row 1: Status and Tasks
+	rows = append(rows, tg.KeyboardButtonRow{
+		Buttons: []tg.KeyboardButtonClass{
+			&tg.KeyboardButtonCallback{
+				Text: "📊 状态",
+				Data: []byte(MenuCallbackStatus),
 			},
-			{
-				Buttons: []tg.KeyboardButtonClass{
-					&tg.KeyboardButtonCallback{
-						Text: "💾 存储位置",
-						Data: []byte(MenuCallbackStorages),
-					},
-					&tg.KeyboardButtonCallback{
-						Text: "⚙️ 默认存储",
-						Data: []byte(MenuCallbackSettings),
-					},
-				},
-			},
-			{
-				Buttons: []tg.KeyboardButtonClass{
-					&tg.KeyboardButtonCallback{
-						Text: "🔄 刷新",
-						Data: []byte(MenuCallbackRefresh),
-					},
-				},
+			&tg.KeyboardButtonCallback{
+				Text: "📋 任务",
+				Data: []byte(MenuCallbackTasks),
 			},
 		},
+	})
+
+	// Row 2: Quick storage buttons (up to 3)
+	if len(storage.Storages) > 0 {
+		var storageButtons []tg.KeyboardButtonClass
+		count := 0
+		for name := range storage.Storages {
+			if count >= 3 {
+				break
+			}
+			storageButtons = append(storageButtons, &tg.KeyboardButtonCallback{
+				Text: "📁 " + name,
+				Data: []byte(MenuCallbackStorageSelect + name),
+			})
+			count++
+		}
+		if len(storageButtons) > 0 {
+			rows = append(rows, tg.KeyboardButtonRow{
+				Buttons: storageButtons,
+			})
+		}
+	}
+
+	// Row 3: Storage management
+	rows = append(rows, tg.KeyboardButtonRow{
+		Buttons: []tg.KeyboardButtonClass{
+			&tg.KeyboardButtonCallback{
+				Text: "💾 存储位置",
+				Data: []byte(MenuCallbackStorages),
+			},
+			&tg.KeyboardButtonCallback{
+				Text: "⚙️ 默认存储",
+				Data: []byte(MenuCallbackSettings),
+			},
+		},
+	})
+
+	// Row 4: Refresh
+	rows = append(rows, tg.KeyboardButtonRow{
+		Buttons: []tg.KeyboardButtonClass{
+			&tg.KeyboardButtonCallback{
+				Text: "🔄 刷新",
+				Data: []byte(MenuCallbackRefresh),
+			},
+		},
+	})
+
+	markup := &tg.ReplyInlineMarkup{
+		Rows: rows,
 	}
 
 	// Send menu message
@@ -114,6 +145,8 @@ func handleMenuCallback(ctx *ext.Context, u *ext.Update) error {
 		return showSettingsCallback(ctx, chatID, msgID)
 	case strings.HasPrefix(callbackData, MenuCallbackRefresh):
 		return showMainMenu(ctx, chatID, msgID)
+	case strings.HasPrefix(callbackData, MenuCallbackStorageSelect):
+		return handleStorageSelectCallback(ctx, chatID, msgID, callbackData)
 	}
 
 	return nil
@@ -278,6 +311,54 @@ func showSettingsCallback(ctx *ext.Context, chatID int64, msgID int) error {
 	_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
 		Message:    settingsText,
 		ID:         msgID,
+		ReplyMarkup: markup,
+	})
+	return err
+}
+
+
+// handleStorageSelectCallback handles quick storage selection from menu
+func handleStorageSelectCallback(ctx *ext.Context, chatID int64, msgID int, callbackData string) error {
+	// Extract storage name from callback data
+	storageName := strings.TrimPrefix(callbackData, MenuCallbackStorageSelect)
+	
+	if storageName == "" {
+		return showStoragesCallback(ctx, chatID, msgID)
+	}
+	
+	// Check if storage exists
+	stor, exists := storage.Storages[storageName]
+	if !exists {
+		_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
+			ID:      msgID,
+			Message: "❌ 存储位置不存在: " + storageName,
+		})
+		return err
+	}
+	
+	// Show confirmation with storage info
+	storageType := stor.Type().String()
+	confirmText := fmt.Sprintf("✅ 已选择存储: *%s*\n\n", storageName)
+	confirmText += fmt.Sprintf("类型: %s\n", storageType)
+	confirmText += "\n请发送要保存的文件，我将自动保存到此存储位置。"
+	
+	// Add back button
+	markup := &tg.ReplyInlineMarkup{
+		Rows: []tg.KeyboardButtonRow{
+			{
+				Buttons: []tg.KeyboardButtonClass{
+					&tg.KeyboardButtonCallback{
+						Text: "🔙 返回菜单",
+						Data: []byte(MenuCallbackRefresh),
+					},
+				},
+			},
+		},
+	}
+	
+	_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
+		ID:          msgID,
+		Message:     confirmText,
 		ReplyMarkup: markup,
 	})
 	return err

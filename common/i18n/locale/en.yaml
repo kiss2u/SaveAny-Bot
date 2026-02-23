@@ -133,6 +133,14 @@ bot:
       error_no_permission: |
         You are not in the whitelist and cannot use this bot.
         You can deploy your own instance: https://github.com/krau/SaveAny-Bot
+      # User-friendly error messages - provide better UX without technical details
+      error_user_generic: "Something went wrong. Please try again later."
+      error_user_storage_access: "Unable to access storage. Please check your storage settings."
+      error_user_task_queue_full: "Task queue is full. Please wait a moment and try again."
+      error_user_file_not_found: "File not found or no longer available."
+      error_user_permission_denied: "You don't have permission to perform this action."
+      error_user_invalid_input: "Invalid input. Please check your command and try again."
+      error_user_network: "Network error. Please check your connection and try again."
     save:
       error_invalid_id_or_username: "Invalid ID or username: {{.Error}}"
     watch:

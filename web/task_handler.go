@@ -10,26 +10,32 @@ func (s *Server) handleGetTasks(c *fiber.Ctx) error {
 	queued := core.GetQueuedTasks(s.ctx)
 
 	type TaskInfo struct {
-		ID     string `json:"id"`
-		Title  string `json:"title"`
-		Status string `json:"status"`
+		ID        string `json:"id"`
+		Title     string `json:"title"`
+		Status    string `json:"status"`
+		Created   int64  `json:"created"` // Unix timestamp
+		Cancelled bool   `json:"cancelled"`
 	}
 
 	runningTasks := make([]TaskInfo, 0, len(running))
 	for _, t := range running {
 		runningTasks = append(runningTasks, TaskInfo{
-			ID:     t.ID,
-			Title:  t.Title,
-			Status: "running",
+			ID:        t.ID,
+			Title:     t.Title,
+			Status:    "running",
+			Created:   t.Created.Unix(),
+			Cancelled: t.Cancelled,
 		})
 	}
 
 	queuedTasks := make([]TaskInfo, 0, len(queued))
 	for _, t := range queued {
 		queuedTasks = append(queuedTasks, TaskInfo{
-			ID:     t.ID,
-			Title:  t.Title,
-			Status: "queued",
+			ID:        t.ID,
+			Title:     t.Title,
+			Status:    "queued",
+			Created:   t.Created.Unix(),
+			Cancelled: t.Cancelled,
 		})
 	}
 

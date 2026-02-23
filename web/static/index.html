@@ -246,6 +246,11 @@
             color: var(--warning);
         }
 
+        .task-cancelled {
+            color: var(--danger);
+            margin-left: 8px;
+        }
+
         .empty-state {
             text-align: center;
             padding: 40px 20px;
@@ -483,6 +488,67 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Real-time indicator */
+        .refresh-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .refresh-indicator.refreshing {
+            color: var(--accent);
+        }
+
+        .refresh-indicator .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .refresh-indicator.refreshing .dot {
+            background: var(--accent);
+            animation: pulse-dot 1s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .last-updated {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* Skeleton loading */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-text {
+            height: 14px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-title {
+            height: 20px;
+            width: 60%;
+            margin-bottom: 12px;
+        }
+
         /* Tab Navigation */
         .tabs {
             display: flex;
@@ -567,6 +633,10 @@
                 </div>
             </div>
             <div class="header-right">
+                <div class="refresh-indicator" id="refresh-indicator">
+                    <span class="dot"></span>
+                    <span>已更新</span>
+                </div>
                 <div class="status-badge">
                     <span class="status-dot"></span>
                     <span>在线</span>
@@ -692,6 +762,50 @@
 
     <script>
         const API_BASE = '';
+        let lastUpdateTime = null;
+        let isRefreshing = false;
+        let refreshTimer = null;
+        const REFRESH_INTERVAL = 10000; // 10 seconds
+
+        // Format timestamp
+        function formatTime(date) {
+            return date.toLocaleTimeString('zh-CN', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+        }
+
+        // Show loading skeleton
+        function showSkeleton(elementId) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = `
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text"></div>
+            `;
+        }
+
+        // Update refresh indicator
+        function updateRefreshIndicator() {
+            const indicator = document.getElementById('refresh-indicator');
+            const lastUpdated = document.getElementById('last-updated');
+            
+            if (indicator) {
+                if (isRefreshing) {
+                    indicator.classList.add('refreshing');
+                    indicator.innerHTML = '<span class="dot"></span> 刷新中...';
+                } else {
+                    indicator.classList.remove('refreshing');
+                    indicator.innerHTML = '<span class="dot"></span> 已更新';
+                }
+            }
+            
+            if (lastUpdated && lastUpdateTime) {
+                lastUpdated.textContent = '最后更新: ' + formatTime(lastUpdateTime);
+            }
+        }
         
         async function fetchJSON(url) {
             const res = await fetch(API_BASE + url);
@@ -748,11 +862,27 @@
                     return;
                 }
                 
+                // Format timestamp
+                const formatTime = (timestamp) => {
+                    if (!timestamp) return '';
+                    const date = new Date(timestamp * 1000);
+                    const now = new Date();
+                    const diff = Math.floor((now - date) / 1000);
+                    
+                    if (diff < 60) return diff + '秒前';
+                    if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
+                    if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
+                    return date.toLocaleDateString('zh-CN');
+                };
+                
                 list.innerHTML = allTasks.map(t => `
                     <div class="task-item">
                         <div class="task-info">
                             <div class="task-name">${t.title || '未命名任务'}</div>
-                            <div class="task-meta">${t.type || 'unknown'}</div>
+                            <div class="task-meta">
+                                ${t.type || 'unknown'} • ${formatTime(t.created)}
+                                ${t.cancelled ? '<span class="task-cancelled">已取消</span>' : ''}
+                            </div>
                         </div>
                         <span class="task-status ${t.status === 'running' ? 'running' : 'queued'}">${t.status === 'running' ? '下载中' : '队列中'}</span>
                     </div>
@@ -773,18 +903,36 @@
         }
 
         async function refreshAll() {
-            await Promise.all([loadStatus(), loadStorages(), loadTasks(), loadConfig()]);
+            isRefreshing = true;
+            updateRefreshIndicator();
+            
+            try {
+                await Promise.all([loadStatus(), loadStorages(), loadTasks(), loadConfig()]);
+                lastUpdateTime = new Date();
+            } finally {
+                isRefreshing = false;
+                updateRefreshIndicator();
+            }
         }
 
         function refreshTasks() {
             loadTasks();
         }
 
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+R or F5 to refresh
+            if ((e.ctrlKey && e.key === 'r') || e.key === 'F5') {
+                e.preventDefault();
+                refreshAll();
+            }
+        });
+
         // Initial load
         refreshAll();
         
-        // Auto refresh every 10 seconds
-        setInterval(refreshAll, 10000);
+        // Auto refresh
+        refreshTimer = setInterval(refreshAll, REFRESH_INTERVAL);
     </script>
 </body>
 </html>
