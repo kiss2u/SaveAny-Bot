@@ -14,7 +14,6 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.12
 	github.com/goccy/go-yaml v1.19.2
 	github.com/gofiber/fiber/v2 v2.52.0
-	github.com/gofiber/utils/v2 v2.0.0-beta.4
 	github.com/gotd/contrib v0.21.1
 	github.com/gotd/td v0.137.0
 	github.com/johannesboyne/gofakes3 v0.0.0-20250916175020-ebf3e50324d3
@@ -35,6 +34,7 @@ require (
 require (
 	github.com/AnimeKaizoku/cacher v1.0.3 // indirect
 	github.com/ProtonMail/go-crypto v1.3.0 // indirect
+	github.com/andybalholm/brotli v1.2.0 // indirect
 	github.com/aws/smithy-go v1.24.0 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
@@ -98,6 +98,8 @@ require (
 	github.com/tetratelabs/wazero v1.11.0 // indirect
 	github.com/tinylib/msgp v1.6.3 // indirect
 	github.com/ulikunitz/xz v0.5.15 // indirect
+	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	github.com/valyala/fasthttp v1.68.0 // indirect
 	go.opentelemetry.io/otel v1.39.0 // indirect
 	go.opentelemetry.io/otel/metric v1.39.0 // indirect
 	go.opentelemetry.io/otel/trace v1.39.0 // indirect
