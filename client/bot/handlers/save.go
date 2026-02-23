@@ -40,6 +40,19 @@ func handleSaveCmd(ctx *ext.Context, update *ext.Update) error {
 	if err != nil {
 		return err
 	}
+
+	// If user has default storage, use it directly without prompting
+	if userDB.DefaultStorage != "" {
+		stor, err := storage.GetStorageByUserIDAndName(ctx, update.GetUserChat().GetID(), userDB.DefaultStorage)
+		if err != nil {
+			logger.Errorf("Failed to get default storage: %s", err)
+			ctx.Reply(update, ext.ReplyTextString(i18n.T(i18nk.BotMsgCommonErrorGetStorageFailed, map[string]any{"Error": err.Error()})), nil)
+			return dispatcher.EndGroups
+		}
+		ctx.Context = storage.WithContext(ctx.Context, stor)
+		return handleSilentSaveReplied(ctx, update)
+	}
+
 	opts := mediautil.TfileOptions(ctx, userDB, replyTo.Message)
 	if len(args) > 1 {
 		// custom filename via command arg

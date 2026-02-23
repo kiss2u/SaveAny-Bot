@@ -17,7 +17,7 @@ const (
 	MenuCallbackStatus    = "menu:status"
 	MenuCallbackTasks    = "menu:tasks"
 	MenuCallbackStorages = "menu:storages"
-	MenuCallbackSilent   = "menu:silent"
+	MenuCallbackSettings = "menu:settings"
 	MenuCallbackRefresh  = "menu:refresh"
 )
 
@@ -30,23 +30,25 @@ func showMainMenu(ctx *ext.Context, chatID int64, msgID ...int) error {
 	runningTasks := core.GetRunningTasks(context.Background())
 	queuedTasks := core.GetQueuedTasks(context.Background())
 
-	statusText := fmt.Sprintf("📊 *SaveAny-Bot Status*\n\n✅ Bot: Online\n📥 Running: %d\n⏳ Queued: %d\n💾 Storages: %d\n\n_Use buttons below or send commands_",
-		len(runningTasks),
-		len(queuedTasks),
-		len(storage.Storages),
-	)
+	statusText := "📊 *SaveAny-Bot* - 主菜单\n\n"
+	statusText += "━━━━━━━━━━━━━━\n"
+	statusText += fmt.Sprintf("📥 下载中: %d\n", len(runningTasks))
+	statusText += fmt.Sprintf("⏳ 队列中: %d\n", len(queuedTasks))
+	statusText += fmt.Sprintf("💾 存储: %d\n", len(storage.Storages))
+	statusText += "━━━━━━━━━━━━━━\n\n"
+	statusText += "选择一个操作:"
 
-	// Build inline keyboard
+	// Build inline keyboard - simple and clean
 	markup := &tg.ReplyInlineMarkup{
 		Rows: []tg.KeyboardButtonRow{
 			{
 				Buttons: []tg.KeyboardButtonClass{
 					&tg.KeyboardButtonCallback{
-						Text: "📊 Status",
+						Text: "📊 状态",
 						Data: []byte(MenuCallbackStatus),
 					},
 					&tg.KeyboardButtonCallback{
-						Text: "📋 Tasks",
+						Text: "📋 任务",
 						Data: []byte(MenuCallbackTasks),
 					},
 				},
@@ -54,19 +56,19 @@ func showMainMenu(ctx *ext.Context, chatID int64, msgID ...int) error {
 			{
 				Buttons: []tg.KeyboardButtonClass{
 					&tg.KeyboardButtonCallback{
-						Text: "💾 Storages",
+						Text: "💾 存储位置",
 						Data: []byte(MenuCallbackStorages),
 					},
 					&tg.KeyboardButtonCallback{
-						Text: "🔇 Silent Mode",
-						Data: []byte(MenuCallbackSilent),
+						Text: "⚙️ 默认存储",
+						Data: []byte(MenuCallbackSettings),
 					},
 				},
 			},
 			{
 				Buttons: []tg.KeyboardButtonClass{
 					&tg.KeyboardButtonCallback{
-						Text: "🔄 Refresh",
+						Text: "🔄 刷新",
 						Data: []byte(MenuCallbackRefresh),
 					},
 				},
@@ -108,8 +110,8 @@ func handleMenuCallback(ctx *ext.Context, u *ext.Update) error {
 		return showTasksCallback(ctx, chatID, msgID)
 	case strings.HasPrefix(callbackData, MenuCallbackStorages):
 		return showStoragesCallback(ctx, chatID, msgID)
-	case strings.HasPrefix(callbackData, MenuCallbackSilent):
-		return toggleSilentCallback(ctx, chatID, msgID)
+	case strings.HasPrefix(callbackData, MenuCallbackSettings):
+		return showSettingsCallback(ctx, chatID, msgID)
 	case strings.HasPrefix(callbackData, MenuCallbackRefresh):
 		return showMainMenu(ctx, chatID, msgID)
 	}
@@ -127,23 +129,15 @@ func showStatusCallback(ctx *ext.Context, chatID int64, msgID int) error {
 		shortHash = shortHash[:7]
 	}
 
-	statusText := fmt.Sprintf(`📊 *System Status*
-
-✅ **Bot Status**: Running
-📥 **Running Tasks**: %d
-⏳ **Queued Tasks**: %d
-💾 **Active Storages**: %d
-⚙️ **Workers**: %d
-🔄 **Version**: %s (%s)
-
-_Updated: just now_`,
-		len(runningTasks),
-		len(queuedTasks),
-		len(storage.Storages),
-		config.C().Workers,
-		config.Version,
-		shortHash,
-	)
+	statusText := "📊 *系统状态*\n\n"
+	statusText += "━━━━━━━━━━━━━━\n"
+	statusText += fmt.Sprintf("✅ 状态: 运行中\n")
+	statusText += fmt.Sprintf("📥 下载任务: %d\n", len(runningTasks))
+	statusText += fmt.Sprintf("⏳ 队列任务: %d\n", len(queuedTasks))
+	statusText += fmt.Sprintf("💾 存储数量: %d\n", len(storage.Storages))
+	statusText += fmt.Sprintf("⚙️ 工作线程: %d\n", config.C().Workers)
+	statusText += fmt.Sprintf("🔄 版本: %s\n", config.Version)
+	statusText += "━━━━━━━━━━━━━━"
 
 	// Add back button
 	markup := &tg.ReplyInlineMarkup{
@@ -151,7 +145,7 @@ _Updated: just now_`,
 			{
 				Buttons: []tg.KeyboardButtonClass{
 					&tg.KeyboardButtonCallback{
-						Text: "🔙 Back to Menu",
+						Text: "🔙 返回菜单",
 						Data: []byte(MenuCallbackRefresh),
 					},
 				},
@@ -174,15 +168,15 @@ func showTasksCallback(ctx *ext.Context, chatID int64, msgID int) error {
 	var tasksText string
 
 	if len(runningTasks) == 0 && len(queuedTasks) == 0 {
-		tasksText = "📋 *Tasks*\n\nNo active tasks"
+		tasksText = "📋 *任务列表*\n\n暂无任务"
 	} else {
-		tasksText = "📋 *Tasks*\n\n"
+		tasksText = "📋 *任务列表*\n\n"
 
 		if len(runningTasks) > 0 {
-			tasksText += "📥 *Running:*\n"
+			tasksText += "📥 *下载中:*\n"
 			for i, task := range runningTasks {
-				if i >= 5 { // Show max 5 tasks
-					tasksText += fmt.Sprintf("\n... and %d more", len(runningTasks)-5)
+				if i >= 5 {
+					tasksText += fmt.Sprintf("\n... 还有 %d 个", len(runningTasks)-5)
 					break
 				}
 				tasksText += fmt.Sprintf("• %s\n", task.Title)
@@ -190,10 +184,10 @@ func showTasksCallback(ctx *ext.Context, chatID int64, msgID int) error {
 		}
 
 		if len(queuedTasks) > 0 {
-			tasksText += "\n⏳ *Queued:*\n"
+			tasksText += "\n⏳ *队列中:*\n"
 			for i, task := range queuedTasks {
 				if i >= 5 {
-					tasksText += fmt.Sprintf("\n... and %d more", len(queuedTasks)-5)
+					tasksText += fmt.Sprintf("\n... 还有 %d 个", len(queuedTasks)-5)
 					break
 				}
 				tasksText += fmt.Sprintf("• %s\n", task.Title)
@@ -207,11 +201,11 @@ func showTasksCallback(ctx *ext.Context, chatID int64, msgID int) error {
 			{
 				Buttons: []tg.KeyboardButtonClass{
 					&tg.KeyboardButtonCallback{
-						Text: "🔄 Refresh",
+						Text: "🔄 刷新",
 						Data: []byte(MenuCallbackTasks),
 					},
 					&tg.KeyboardButtonCallback{
-						Text: "🔙 Back",
+						Text: "🔙 返回",
 						Data: []byte(MenuCallbackRefresh),
 					},
 				},
@@ -228,7 +222,7 @@ func showTasksCallback(ctx *ext.Context, chatID int64, msgID int) error {
 }
 
 func showStoragesCallback(ctx *ext.Context, chatID int64, msgID int) error {
-	storagesText := "💾 *Storages*\n\n"
+	storagesText := "💾 *存储位置*\n\n"
 
 	for name, s := range storage.Storages {
 		storType := s.Type().String()
@@ -236,7 +230,7 @@ func showStoragesCallback(ctx *ext.Context, chatID int64, msgID int) error {
 	}
 
 	if len(storage.Storages) == 0 {
-		storagesText += "_No storages configured_"
+		storagesText += "_暂无存储配置_"
 	}
 
 	// Add back button
@@ -245,7 +239,7 @@ func showStoragesCallback(ctx *ext.Context, chatID int64, msgID int) error {
 			{
 				Buttons: []tg.KeyboardButtonClass{
 					&tg.KeyboardButtonCallback{
-						Text: "🔙 Back to Menu",
+						Text: "🔙 返回菜单",
 						Data: []byte(MenuCallbackRefresh),
 					},
 				},
@@ -261,10 +255,11 @@ func showStoragesCallback(ctx *ext.Context, chatID int64, msgID int) error {
 	return err
 }
 
-func toggleSilentCallback(ctx *ext.Context, chatID int64, msgID int) error {
-	silentText := "🔇 *Silent Mode*\n\n"
-	silentText += "Current: _Use /silent to toggle_\n\n"
-	silentText += "When enabled, bot won't send completion notifications for downloads."
+func showSettingsCallback(ctx *ext.Context, chatID int64, msgID int) error {
+	settingsText := "⚙️ *设置*\n\n"
+	settingsText += "使用 /silent 命令设置默认存储位置\n\n"
+	settingsText += "设置后，发送文件将自动保存到默认位置，无需每次选择。\n\n"
+	settingsText += "_发送 /silent 来选择默认存储_"
 
 	// Add back button
 	markup := &tg.ReplyInlineMarkup{
@@ -272,7 +267,7 @@ func toggleSilentCallback(ctx *ext.Context, chatID int64, msgID int) error {
 			{
 				Buttons: []tg.KeyboardButtonClass{
 					&tg.KeyboardButtonCallback{
-						Text: "🔙 Back to Menu",
+						Text: "🔙 返回菜单",
 						Data: []byte(MenuCallbackRefresh),
 					},
 				},
@@ -281,7 +276,7 @@ func toggleSilentCallback(ctx *ext.Context, chatID int64, msgID int) error {
 	}
 
 	_, err := ctx.EditMessage(chatID, &tg.MessagesEditMessageRequest{
-		Message:    silentText,
+		Message:    settingsText,
 		ID:         msgID,
 		ReplyMarkup: markup,
 	})
