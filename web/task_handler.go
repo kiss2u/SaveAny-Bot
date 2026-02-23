@@ -2,7 +2,7 @@ package web
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/krau/SaveAny-Bot/core"
+	"github.com/kiss2u/SaveAny-Bot/core"
 )
 
 func (s *Server) handleGetTasks(c *fiber.Ctx) error {

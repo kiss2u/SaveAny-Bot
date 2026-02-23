@@ -6,9 +6,9 @@ import (
 	"github.com/duke-git/lancet/v2/convertor"
 
 	"github.com/charmbracelet/log"
-	"github.com/krau/SaveAny-Bot/database"
-	"github.com/krau/SaveAny-Bot/pkg/rule"
-	"github.com/krau/SaveAny-Bot/pkg/tfile"
+	"github.com/kiss2u/SaveAny-Bot/database"
+	"github.com/kiss2u/SaveAny-Bot/pkg/rule"
+	"github.com/kiss2u/SaveAny-Bot/pkg/tfile"
 )
 
 type ruleInput struct {

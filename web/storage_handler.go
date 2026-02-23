@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/krau/SaveAny-Bot/storage"
+	"github.com/kiss2u/SaveAny-Bot/storage"
 )
 
 // cacheEntry stores cached response with expiration time

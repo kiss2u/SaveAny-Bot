@@ -7,9 +7,9 @@ import (
 
 	"github.com/celestix/gotgproto/ext"
 	"github.com/gotd/td/tg"
-	"github.com/krau/SaveAny-Bot/config"
-	"github.com/krau/SaveAny-Bot/core"
-	"github.com/krau/SaveAny-Bot/storage"
+	"github.com/kiss2u/SaveAny-Bot/config"
+	"github.com/kiss2u/SaveAny-Bot/core"
+	"github.com/kiss2u/SaveAny-Bot/storage"
 )
 
 // MenuCallback prefixes

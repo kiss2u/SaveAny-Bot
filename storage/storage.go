@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"io"
 
-	storcfg "github.com/krau/SaveAny-Bot/config/storage"
-	storenum "github.com/krau/SaveAny-Bot/pkg/enums/storage"
-	"github.com/krau/SaveAny-Bot/pkg/storagetypes"
-	"github.com/krau/SaveAny-Bot/storage/alist"
-	"github.com/krau/SaveAny-Bot/storage/local"
-	"github.com/krau/SaveAny-Bot/storage/minio"
-	"github.com/krau/SaveAny-Bot/storage/rclone"
-	"github.com/krau/SaveAny-Bot/storage/s3"
-	"github.com/krau/SaveAny-Bot/storage/telegram"
-	"github.com/krau/SaveAny-Bot/storage/webdav"
+	storcfg "github.com/kiss2u/SaveAny-Bot/config/storage"
+	storenum "github.com/kiss2u/SaveAny-Bot/pkg/enums/storage"
+	"github.com/kiss2u/SaveAny-Bot/pkg/storagetypes"
+	"github.com/kiss2u/SaveAny-Bot/storage/alist"
+	"github.com/kiss2u/SaveAny-Bot/storage/local"
+	"github.com/kiss2u/SaveAny-Bot/storage/minio"
+	"github.com/kiss2u/SaveAny-Bot/storage/rclone"
+	"github.com/kiss2u/SaveAny-Bot/storage/s3"
+	"github.com/kiss2u/SaveAny-Bot/storage/telegram"
+	"github.com/kiss2u/SaveAny-Bot/storage/webdav"
 )
 
 type Storage interface {

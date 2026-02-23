@@ -77,8 +77,8 @@ import (
     
     "github.com/charmbracelet/log"
     
-    "github.com/krau/SaveAny-Bot/config"
-    "github.com/krau/SaveAny-Bot/pkg/enums/storage"
+    "github.com/kiss2u/SaveAny-Bot/config"
+    "github.com/kiss2u/SaveAny-Bot/pkg/enums/storage"
 )
 ```
 

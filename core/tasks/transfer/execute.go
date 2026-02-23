@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 
 	"github.com/charmbracelet/log"
-	"github.com/krau/SaveAny-Bot/config"
-	"github.com/krau/SaveAny-Bot/pkg/enums/ctxkey"
-	"github.com/krau/SaveAny-Bot/storage"
+	"github.com/kiss2u/SaveAny-Bot/config"
+	"github.com/kiss2u/SaveAny-Bot/pkg/enums/ctxkey"
+	"github.com/kiss2u/SaveAny-Bot/storage"
 	"golang.org/x/sync/errgroup"
 )
 

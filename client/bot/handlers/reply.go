@@ -4,8 +4,8 @@ package handlers
 import (
 	"github.com/celestix/gotgproto/ext"
 	"github.com/charmbracelet/log"
-	"github.com/krau/SaveAny-Bot/common/i18n"
-	"github.com/krau/SaveAny-Bot/common/i18n/i18nk"
+	"github.com/kiss2u/SaveAny-Bot/common/i18n"
+	"github.com/kiss2u/SaveAny-Bot/common/i18n/i18nk"
 	"github.com/gotd/td/tg"
 )
 

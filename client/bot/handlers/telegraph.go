@@ -10,14 +10,14 @@ import (
 	"github.com/gotd/td/telegram/message/entity"
 	"github.com/gotd/td/telegram/message/styling"
 	"github.com/gotd/td/tg"
-	"github.com/krau/SaveAny-Bot/client/bot/handlers/utils/dirutil"
-	"github.com/krau/SaveAny-Bot/client/bot/handlers/utils/msgelem"
-	"github.com/krau/SaveAny-Bot/client/bot/handlers/utils/shortcut"
-	"github.com/krau/SaveAny-Bot/common/i18n"
-	"github.com/krau/SaveAny-Bot/common/i18n/i18nk"
-	"github.com/krau/SaveAny-Bot/pkg/enums/tasktype"
-	"github.com/krau/SaveAny-Bot/pkg/tcbdata"
-	"github.com/krau/SaveAny-Bot/storage"
+	"github.com/kiss2u/SaveAny-Bot/client/bot/handlers/utils/dirutil"
+	"github.com/kiss2u/SaveAny-Bot/client/bot/handlers/utils/msgelem"
+	"github.com/kiss2u/SaveAny-Bot/client/bot/handlers/utils/shortcut"
+	"github.com/kiss2u/SaveAny-Bot/common/i18n"
+	"github.com/kiss2u/SaveAny-Bot/common/i18n/i18nk"
+	"github.com/kiss2u/SaveAny-Bot/pkg/enums/tasktype"
+	"github.com/kiss2u/SaveAny-Bot/pkg/tcbdata"
+	"github.com/kiss2u/SaveAny-Bot/storage"
 )
 
 func handleTelegraphUrlMessage(ctx *ext.Context, update *ext.Update) error {

@@ -11,9 +11,9 @@ import (
 	"sync"
 
 	"github.com/charmbracelet/log"
-	config "github.com/krau/SaveAny-Bot/config/storage"
-	"github.com/krau/SaveAny-Bot/pkg/enums/ctxkey"
-	storenum "github.com/krau/SaveAny-Bot/pkg/enums/storage"
+	config "github.com/kiss2u/SaveAny-Bot/config/storage"
+	"github.com/kiss2u/SaveAny-Bot/pkg/enums/ctxkey"
+	storenum "github.com/kiss2u/SaveAny-Bot/pkg/enums/storage"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/rs/xid"

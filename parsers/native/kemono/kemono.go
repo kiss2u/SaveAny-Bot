@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	"github.com/duke-git/lancet/v2/strutil"
-	"github.com/krau/SaveAny-Bot/common/utils/netutil"
-	"github.com/krau/SaveAny-Bot/pkg/parser"
+	"github.com/kiss2u/SaveAny-Bot/common/utils/netutil"
+	"github.com/kiss2u/SaveAny-Bot/pkg/parser"
 )
 
 type KemonoParser struct{}

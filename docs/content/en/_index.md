@@ -31,6 +31,6 @@ Save Any Bot is a tool that allows you to save files from Telegram to various st
     - Local disk
     - Telegram (re-upload to specified chat)
 
-## [Contributors](https://github.com/krau/SaveAny-Bot/graphs/contributors)
+## [Contributors](https://github.com/kiss2u/SaveAny-Bot/graphs/contributors)
 
 ![Contributors](https://contrib.rocks/image?repo=krau/SaveAny-Bot&max=750&columns=20)

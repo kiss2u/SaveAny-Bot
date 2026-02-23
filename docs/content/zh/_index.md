@@ -32,6 +32,6 @@ title: 介绍
   - Rclone (通过命令行调用)
   - Telegram (重传回指定聊天)
 
-## [贡献者](https://github.com/krau/SaveAny-Bot/graphs/contributors)
+## [贡献者](https://github.com/kiss2u/SaveAny-Bot/graphs/contributors)
 
 ![Contributors](https://contrib.rocks/image?repo=krau/SaveAny-Bot&max=750&columns=20)
