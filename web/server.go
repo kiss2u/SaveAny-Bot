@@ -76,6 +76,11 @@ func (s *Server) setupRoutes() {
 	api.Get("/tasks", s.handleGetTasks)
 	api.Delete("/tasks/:id", s.handleCancelTask)
 
+	// Debug - Message logs
+	api.Get("/debug/messages", s.handleGetMessageLogs)
+	api.Get("/debug/messages/stats", s.handleGetMessageStats)
+	api.Delete("/debug/messages", s.handleClearMessageLogs)
+
 	// Wizard - 公开路由（不需要认证）
 	wizard := s.app.Group("/api/wizard")
 	wizard.Get("/fields", s.handleWizardStorageFields)

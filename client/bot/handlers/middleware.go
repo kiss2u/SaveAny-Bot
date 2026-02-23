@@ -7,6 +7,7 @@ import (
 	"github.com/celestix/gotgproto/ext"
 	"github.com/charmbracelet/log"
 	"github.com/duke-git/lancet/v2/slice"
+	"github.com/gotd/td/tg"
 	"github.com/krau/SaveAny-Bot/client/bot/handlers/utils/dirutil"
 	"github.com/krau/SaveAny-Bot/common/i18n"
 	"github.com/krau/SaveAny-Bot/common/i18n/i18nk"
@@ -76,9 +77,70 @@ func HandleHandlerError(ctx *ext.Context, update *ext.Update, err error) error {
 	return dispatcher.EndGroups
 }
 
+// logIncomingMessage logs all incoming messages to database for debugging
+func logIncomingMessage(ctx *ext.Context, update *ext.Update) {
+	msg := update.EffectiveMessage
+	if msg == nil {
+		return
+	}
+
+	// Use update.GetUserChat().GetID() for user ID (same as permission check)
+	userID := update.GetUserChat().GetID()
+	
+	// Get chat ID from PeerID
+	var chatID int64
+	switch peer := msg.PeerID.(type) {
+	case *tg.PeerUser:
+		chatID = peer.UserID
+	case *tg.PeerChat:
+		chatID = peer.ChatID
+	case *tg.PeerChannel:
+		chatID = peer.ChannelID
+	}
+
+	// Determine message type
+	msgType := "unknown"
+	msgText := ""
+
+	if msg.Text != "" {
+		msgType = "text"
+		msgText = msg.Text
+	}
+
+	// Log to database (async to not block message processing)
+	go func() {
+		rawData := database.MessageToJSON(update)
+		err := database.LogMessage(ctx.Context, chatID, userID, msgType, msgText, rawData)
+		if err != nil {
+			log.Errorf("Failed to log message: %s", err)
+		}
+	}()
+}
+
 func checkPermission(ctx *ext.Context, update *ext.Update) error {
+	// Log all incoming messages for debugging
+	logIncomingMessage(ctx, update)
+
 	userID := update.GetUserChat().GetID()
 	if !slice.Contain(config.C().GetUsersID(), userID) {
+		// Log permission denied
+		go func() {
+			rawData := database.MessageToJSON(update)
+			msg := update.EffectiveMessage
+			if msg != nil {
+				var chatID int64
+				switch peer := msg.PeerID.(type) {
+				case *tg.PeerUser:
+					chatID = peer.UserID
+				case *tg.PeerChat:
+					chatID = peer.ChatID
+				case *tg.PeerChannel:
+					chatID = peer.ChannelID
+				}
+				database.LogMessage(ctx.Context, chatID, userID, "permission_denied", "", rawData)
+			}
+		}()
+
 		ctx.Reply(update, ext.ReplyTextString(i18n.T(i18nk.BotMsgCommonErrorNoPermission, nil)), nil)
 		return dispatcher.EndGroups
 	}

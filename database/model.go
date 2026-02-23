@@ -40,3 +40,13 @@ type Rule struct {
 	StorageName string
 	DirPath     string
 }
+
+// MessageLog stores incoming Telegram messages for debugging
+type MessageLog struct {
+	gorm.Model
+	ChatID     int64  `gorm:"index"`
+	UserID     int64  `gorm:"index"`
+	Message    string `gorm:"type:text"`
+	MessageType string // text, photo, document, video, etc.
+	RawData    string `gorm:"type:text"` // JSON raw data for debugging
+}

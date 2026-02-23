@@ -933,6 +933,82 @@
         
         // Auto refresh
         refreshTimer = setInterval(refreshAll, REFRESH_INTERVAL);
+
+        // Debug functions
+        function loadDebugMessages() {
+            loadDebugStats();
+            loadDebugList();
+        }
+        
+        async function loadDebugStats() {
+            try {
+                const stats = await fetchJSON('/api/debug/messages/stats');
+                const statsEl = document.getElementById('debug-stats');
+                statsEl.innerHTML = `
+                    <span class="debug-stat"><span class="debug-stat-label">总计:</span><span class="debug-stat-value">${stats.total || 0}</span></span>
+                    <span class="debug-stat"><span class="debug-stat-label">今日:</span><span class="debug-stat-value">${stats.today || 0}</span></span>
+                `;
+            } catch (e) {
+                console.error('Failed to load debug stats:', e);
+            }
+        }
+        
+        async function loadDebugList() {
+            try {
+                const messages = await fetchJSON('/api/debug/messages?limit=20');
+                const list = document.getElementById('debug-list');
+                
+                if (messages.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><p>暂无消息记录</p></div>';
+                    return;
+                }
+                
+                list.innerHTML = messages.map(m => `
+                    <div class="debug-item">
+                        <div class="debug-item-header">
+                            <span class="debug-item-type ${m.message_type}">${m.message_type}</span>
+                            <span class="debug-item-time">${m.created_at}</span>
+                        </div>
+                        <div class="debug-item-content">
+                            Chat: ${m.chat_id} | User: ${m.user_id}<br>
+                            ${m.message || '(无文本)'}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error('Failed to load debug messages:', e);
+                document.getElementById('debug-list').innerHTML = '<div class="empty-state"><p>加载失败</p></div>';
+            }
+        }
+        
+        async function clearDebugMessages() {
+            if (!confirm('确定要清空所有消息记录吗？')) return;
+            try {
+                await fetch(API_BASE + '/api/debug/messages', { method: 'DELETE' });
+                loadDebugMessages();
+            } catch (e) {
+                console.error('Failed to clear debug messages:', e);
+            }
+        }
+        
+        // Load debug messages on page load
+        loadDebugMessages();
     </script>
+
+        <!-- Debug Panel -->
+        <div class="debug-panel" id="debug-panel">
+            <div class="debug-header">
+                <span class="debug-title">TG 消息日志 (调试)</span>
+                <div>
+                    <button class="btn btn-secondary btn-sm" onclick="loadDebugMessages()">刷新</button>
+                    <button class="btn btn-danger btn-sm" onclick="clearDebugMessages()">清空</button>
+                </div>
+            </div>
+            <div class="debug-stats" id="debug-stats"></div>
+            <div class="debug-list" id="debug-list">
+                <div class="loading"><div class="spinner"></div></div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
