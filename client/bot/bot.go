@@ -40,14 +40,17 @@ func Init(ctx context.Context) (<-chan struct{}, *gotgproto.Client) {
 	shouldRestart := make(chan struct{})
 
 	go func() {
+		log.FromContext(ctx).Debug("Creating Telegram client with app_id and app_hash...")
 		resolver, err := tgutil.NewConfigProxyResolver()
 		if err != nil {
+			log.FromContext(ctx).Errorf("Failed to create resolver: %v", err)
 			resultChan <- struct {
 				client *gotgproto.Client
 				err    error
 			}{nil, err}
 			return
 		}
+		log.FromContext(ctx).Debugf("Creating new Telegram client with session: %s", config.C().DB.Session)
 		client, err := gotgproto.NewClient(
 			config.C().Telegram.AppID,
 			config.C().Telegram.AppHash,
@@ -71,12 +74,14 @@ func Init(ctx context.Context) (<-chan struct{}, *gotgproto.Client) {
 			},
 		)
 		if err != nil {
+			log.FromContext(ctx).Errorf("Failed to create Telegram client: %v", err)
 			resultChan <- struct {
 				client *gotgproto.Client
 				err    error
 			}{nil, err}
 			return
 		}
+		log.FromContext(ctx).Debug("Telegram client created, setting bot commands...")
 		client.API().BotsSetBotCommands(ctx, &tg.BotsSetBotCommandsRequest{
 			Scope: &tg.BotCommandScopeDefault{},
 		})
@@ -98,6 +103,7 @@ func Init(ctx context.Context) (<-chan struct{}, *gotgproto.Client) {
 	case <-ctx.Done():
 		log.FromContext(ctx).Errorf("Bot initialization cancelled: %s", ctx.Err())
 	case result := <-resultChan:
+		log.FromContext(ctx).Debugf("Received result from Telegram client, error: %v", result.err)
 		if result.err != nil {
 			log.FromContext(ctx).Fatalf("Failed to initialize Bot: %s", result.err)
 		}
