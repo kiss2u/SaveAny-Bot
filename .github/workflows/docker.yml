@@ -3,20 +3,34 @@ name: Build and Push Docker Image
 on:
   push:
     branches: [main, master]
+    tags:
+      - 'v*'
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      variant:
+        description: 'Docker variant to build'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - 'all'
+          - 'regular'
+          - 'micro'
+          - 'pico'
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push:
+  build-regular:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+    if: github.event_name == 'workflow_dispatch' && (inputs.variant == 'all' || inputs.variant == 'regular') || github.event_name != 'workflow_dispatch'
 
     steps:
       - name: Checkout repository
@@ -52,6 +66,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -62,14 +77,12 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # Build multi-platform image
-  build-multi-platform:
+  build-micro:
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' || contains(github.ref, 'refs/tags/v')
-    needs: build-and-push
     permissions:
       contents: read
       packages: write
+    if: github.event_name == 'workflow_dispatch' && (inputs.variant == 'all' || inputs.variant == 'micro') || github.event_name != 'workflow_dispatch'
 
     steps:
       - name: Checkout repository
@@ -82,9 +95,10 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to Container Registry
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -92,19 +106,81 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
+            type=ref,event=branch
+            type=ref,event=pr
             type=semver,pattern={{version}}
+            type=sha,prefix=
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=micro-{{version}},enable={{is_default_branch}}
+            type=raw,value=micro-{{sha}},enable={{is_default_branch}}
 
-      - name: Build and push multi-platform image
+      - name: Build and push micro Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: true
-          platforms: linux/amd64,linux/arm64
+          file: ./Dockerfile.micro
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VERSION=${{ github.ref_name }}
             GitCommit=${{ github.sha }}
             BuildTime=${{ github.timestamp }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  build-pico:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    if: github.event_name == 'workflow_dispatch' && (inputs.variant == 'all' || inputs.variant == 'pico') || github.event_name != 'workflow_dispatch'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=sha,prefix=
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=pico-{{version}},enable={{is_default_branch}}
+            type=raw,value=pico-{{sha}},enable={{is_default_branch}}
+
+      - name: Build and push pico Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.pico
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ github.ref_name }}
+            GitCommit=${{ github.sha }}
+            BuildTime=${{ github.timestamp }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
