@@ -133,11 +133,25 @@ func Init(ctx context.Context, configFile ...string) error {
 		return err
 	}
 
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Println("Error reading config file, ", err)
+		return err
+	}
+
+	// 读取配置前，缓存配置文件中非空的 telegram.token
+	var originalTelegramToken string
+	if viper.IsSet("telegram.token") {
+		originalTelegramToken = viper.GetString("telegram.token")
+	}
 	if err := viper.Unmarshal(cfg); err != nil {
 		fmt.Println("Error unmarshalling config file, ", err)
 		return err
 	}
 
+	// 如果配置文件中 token 有值，而当前读取的结果为空，将原始值恢复回去（防止环境变量空白字符串覆盖配置文件值）
+	if originalTelegramToken != "" && cfg.Telegram.Token == "" {
+		cfg.Telegram.Token = originalTelegramToken
+	}
 	storagesConfig, err := storage.LoadStorageConfigs(viper.GetViper())
 	if err != nil {
 		return fmt.Errorf("error loading storage configs: %w", err)
