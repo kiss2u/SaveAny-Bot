@@ -10,7 +10,7 @@ COPY go.mod go.sum ./
 RUN --mount=type=cache,target=/go/pkg/mod go mod download
 
 COPY . .
-RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg CGO_ENABLED=0 go build -trimpath -tags=no_jsparser,no_minio,no_bubbletea -ldflags="-s -w -X 'github.com/kiss2u/SaveAny-Bot/config.Version=${VERSION}' -X 'github.com/kiss2u/SaveAny-Bot/config.GitCommit=${GitCommit}' -X 'github.com/kiss2u/SaveAny-Bot/config.BuildTime=${BuildTime}' -X 'github.com/kiss2u/SaveAny-Bot/config.Docker=true'" -o saveany-bot .
+RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg CGO_ENABLED=0 go build -trimpath -tags=no_jsparser,no_minio,sqlite_glebarez,no_bubbletea -ldflags="-s -w -X 'github.com/kiss2u/SaveAny-Bot/config.Version=${VERSION}' -X 'github.com/kiss2u/SaveAny-Bot/config.GitCommit=${GitCommit}' -X 'github.com/kiss2u/SaveAny-Bot/config.BuildTime=${BuildTime}' -X 'github.com/kiss2u/SaveAny-Bot/config.Docker=true'" -o saveany-bot .
 
 FROM alpine:latest
 
