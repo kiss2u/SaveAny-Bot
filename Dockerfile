@@ -12,21 +12,14 @@ COPY go.mod go.sum ./
 
 COPY . .
 RUN go mod tidy
-RUN --mount=type=cache,target=/root/.cache/go-build \
-    --mount=type=cache,target=/go/pkg \
-    CGO_ENABLED=0 \
-    go build -trimpath \
-    -ldflags=" \
-    -s -w \
-    -X 'github.com/kiss2u/SaveAny-Bot/config.Version=${VERSION}'
-    -X 'github.com/kiss2u/SaveAny-Bot/config.GitCommit=${GitCommit}'
-    -X 'github.com/kiss2u/SaveAny-Bot/config.BuildTime=${BuildTime}'
-    -X 'github.com/kiss2u/SaveAny-Bot/config.Docker=true'
-    " \
+RUN --mount=type=cache,target=/root/.cache/go-build \\
+    --mount=type=cache,target=/go/pkg \\
+    CGO_ENABLED=0 \\
+    go build -trimpath \\
+    -ldflags=\"-s -w -X 'github.com/kiss2u/SaveAny-Bot/config.Version=${VERSION}' -X 'github.com/kiss2u/SaveAny-Bot/config.GitCommit=${GitCommit}' -X 'github.com/kiss2u/SaveAny-Bot/config.BuildTime=${BuildTime}' -X 'github.com/kiss2u/SaveAny-Bot/config.Docker=true'\" \\
     -o saveany-bot .
 
 FROM alpine:latest
-
 RUN apk add --no-cache curl ffmpeg yt-dlp
 
 WORKDIR /app
