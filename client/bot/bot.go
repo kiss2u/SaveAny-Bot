@@ -9,13 +9,13 @@ import (
 	"github.com/celestix/gotgproto/ext"
 	"github.com/celestix/gotgproto/sessionMaker"
 	"github.com/charmbracelet/log"
+	"github.com/glebarez/sqlite"
 	"github.com/gotd/td/tg"
 	"github.com/kiss2u/SaveAny-Bot/client/bot/handlers"
 	"github.com/kiss2u/SaveAny-Bot/client/middleware"
 	"github.com/kiss2u/SaveAny-Bot/common/i18n"
 	"github.com/kiss2u/SaveAny-Bot/common/utils/tgutil"
 	"github.com/kiss2u/SaveAny-Bot/config"
-	"github.com/kiss2u/SaveAny-Bot/database"
 )
 
 var (
@@ -53,7 +53,7 @@ func Init(ctx context.Context) (<-chan struct{}, *gotgproto.Client) {
 			config.C().Telegram.AppHash,
 			gotgproto.ClientTypeBot(config.C().Telegram.Token),
 			&gotgproto.ClientOpts{
-				Session:          sessionMaker.SqlSession(database.GetDialect(config.C().DB.Session)),
+				Session:          sessionMaker.SqlSession(sqlite.Open(config.C().DB.Session)),
 				DisableCopyright: true,
 				Middlewares:      middleware.NewDefaultMiddlewares(ctx, 5*time.Minute),
 				Resolver:         resolver,

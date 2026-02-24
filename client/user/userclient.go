@@ -12,6 +12,7 @@ import (
 	"github.com/celestix/gotgproto/sessionMaker"
 
 	"github.com/charmbracelet/log"
+	"github.com/glebarez/sqlite"
 	"github.com/gotd/td/tg"
 	"github.com/kiss2u/SaveAny-Bot/client/middleware"
 	"github.com/kiss2u/SaveAny-Bot/common/utils/tgutil"
@@ -56,7 +57,7 @@ func Login(ctx context.Context) (*gotgproto.Client, error) {
 			config.C().Telegram.AppHash,
 			gotgproto.ClientTypePhone(""),
 			&gotgproto.ClientOpts{
-				Session:          sessionMaker.SqlSession(database.GetDialect(config.C().Telegram.Userbot.Session)),
+				Session:          sessionMaker.SqlSession(sqlite.Open(config.C().Telegram.Userbot.Session)),
 				AuthConversator:  &terminalAuthConversator{},
 				Context:          ctx,
 				DisableCopyright: true,
